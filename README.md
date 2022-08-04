@@ -12,4 +12,6 @@ Things I need to look into:
 - Health bar changes colour when lowered
 - Leaderstats
 
-(Will be more added)
+(List will probably get better with more updates!)
+
+Games made before or during 2018 will probably have the best compatibility
