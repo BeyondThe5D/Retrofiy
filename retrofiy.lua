@@ -20,10 +20,15 @@
 --]]
 
 local RetrofiyConfig = {
-	RetroLighting = true, -- [R] -- Force disables lighting properties that weren't in 2016, uses compatibility Techology and deletes effects not seen in 2016
+	RetroLighting = true, -- [L] -- Force disables lighting properties that weren't in 2016, uses compatibility Techology and deletes effects not seen in 2016
 	RetroCoreGui = true, -- [R] -- Replaces the Core Gui with a 2016 Core Gui (Playerlist, topbar, etc)
-	RetroWorkspace = true -- [R] -- Disables terrain decoration and uses old materials
+	RetroWorkspace = true, -- [R] -- Makes the game world look like 2016
+	RetroCharacters = true -- [R] -- Displays health bars above the heads of characters & returns old oof sound
 }
+
+if not game:IsLoaded() then
+	game.Loaded:Wait()
+end
 
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
@@ -31,6 +36,7 @@ local MaterialService = game:GetService("MaterialService")
 local Teams = game:GetService("Teams")
 local CoreGui = game:GetService("CoreGui")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 
 local Player = Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
@@ -53,10 +59,8 @@ if RetrofiyConfig.RetroLighting then
 
 	local function RemoveEffect(effect)
 		RunService.RenderStepped:Wait()
-		for _, restricted in pairs(RestrictedEffects) do
-			if effect:IsA(restricted) then
-				effect:Destroy()
-			end
+		if table.find(RestrictedEffects, effect.ClassName) then
+			effect:Destroy()
 		end
 	end
 
@@ -70,9 +74,7 @@ if RetrofiyConfig.RetroLighting then
 		RemoveEffect(effects)
 	end
 
-	Lighting.DescendantAdded:Connect(function(effect)
-		RemoveEffect(effect)
-	end)
+	Lighting.DescendantAdded:Connect(RemoveEffect)
 
 	Lighting.Changed:Connect(function(property)
 		local Property = RestrictedLighting[property]
@@ -96,9 +98,10 @@ if RetrofiyConfig.RetroCoreGui then
 		[2601528367] = 10476529431,
 		[3456503282] = 10476529431
 	}
-	
-	CoreGui.ThemeProvider.Enabled = false
-	
+
+	CoreGui:WaitForChild("ThemeProvider").Enabled = false
+	CoreGui.PlayerList.Enabled = false
+
 	local Topbar = Instance.new("Frame")
 	Topbar.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
 	Topbar.BackgroundTransparency = 0.5
@@ -136,6 +139,7 @@ if RetrofiyConfig.RetroCoreGui then
 	Username.TextColor3 = Color3.fromRGB(255, 255, 255)
 	Username.TextSize = 14
 	Username.TextXAlignment = Enum.TextXAlignment.Left
+	Username.TextYAlignment = Enum.TextYAlignment.Bottom
 	Username.Parent = NameContainer
 	local HealthBar = Instance.new("Frame")
 	HealthBar.BackgroundColor3 = Color3.fromRGB(228, 236, 246)
@@ -148,12 +152,57 @@ if RetrofiyConfig.RetroCoreGui then
 	HealthFill.BorderSizePixel = 0
 	HealthFill.Size = UDim2.new(1, 0, 1, 0)
 	HealthFill.Parent = HealthBar
+	local IconsFolder = Instance.new("Folder")
+	IconsFolder.Parent = Topbar
+	local UIListLayout = Instance.new("UIListLayout")
+	UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	UIListLayout.Parent = IconsFolder
 	
-	Humanoid.HealthChanged:Connect(function()
-		HealthFill.Size = UDim2.new(Humanoid.Health / Humanoid.MaxHealth, 0, 1, 0)
+	local function CreateIcon(size, image, hoverimage)
+		local Button = Instance.new("ImageButton")
+		Button.BackgroundTransparency = 1
+		Button.Size = UDim2.new(0, 50, 0, 36)
+		Button.Parent = IconsFolder
+		local Image = Instance.new("ImageLabel")
+		Image.AnchorPoint = Vector2.new(0.5, 0.5)
+		Image.BackgroundTransparency = 1
+		Image.Position = UDim2.new(0.5, 0, 0.5, 0)
+		Image.Size = size
+		Image.Image = "rbxassetid://" .. image
+		Image.Parent = Button
+		return Button
+	end
+	
+	local function AttachHumanoidToHealthBar(humanoid)
+		HealthFill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
+		humanoid.HealthChanged:Connect(function()
+			HealthFill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
+		end)
+	end
+
+	local Settings = CreateIcon(UDim2.new(0, 32, 0, 25), 10488455495, 0)
+	local Chat = CreateIcon(UDim2.new(0, 28, 0, 27), 10488448895, 0)
+	local Backpack = CreateIcon(UDim2.new(0, 22, 0, 28), 10488415707, 0)
+	
+	AttachHumanoidToHealthBar(Humanoid)
+	
+	NameContainer.MouseButton1Down:Connect(function()
+		PlayerlistContainer.Visible = not PlayerlistContainer.Visible
 	end)
 	
+	Player.CharacterAdded:Connect(function(character)
+		AttachHumanoidToHealthBar(character:WaitForChild("Humanoid"))
+	end)
+
+	UserInputService.InputBegan:Connect(function(input)
+		if input.KeyCode == Enum.KeyCode.Tab then
+			PlayerlistContainer.Visible = not PlayerlistContainer.Visible
+		end
+	end)
+
 	local TeamsOrderd = {}
+	local NeutralTeamExists = false
 	local Number = 0
 
 	local function ReturnNeutralCount()
@@ -169,9 +218,17 @@ if RetrofiyConfig.RetroCoreGui then
 	end
 
 	local function AddTeamToPlayerlist(team, color, order, neutralteam)
+		if neutralteam then
+			if NeutralTeamExists then
+				return
+			end
+			NeutralTeamExists = true
+		end
+
 		if not order then
 			Number += 1
 		end
+
 		TeamsOrderd[team] = order or Number
 		local Button = Instance.new("ImageButton")
 		Button.Name = team
@@ -229,7 +286,7 @@ if RetrofiyConfig.RetroCoreGui then
 		Icon.Position = UDim2.new(0.01, 1, 0.5, -8)
 		Icon.Size = UDim2.new(0, 16, 0, 16)
 		Icon.Parent = Button
-		
+
 		local function CheckTeams()
 			if #Teams:GetChildren() > 0 then
 				if player.Team then
@@ -240,15 +297,16 @@ if RetrofiyConfig.RetroCoreGui then
 				end
 			end
 		end
-		
+
 		CheckTeams()
-		
+
 		player:GetPropertyChangedSignal("Team"):Connect(function()
 			CheckTeams()
 
 			if ReturnNeutralCount() <= 0 and PlayerlistContainer:FindFirstChild("Neutral") then
 				for _, teams in pairs(PlayerlistContainer:GetChildren()) do
 					if teams:FindFirstChildOfClass("BoolValue") then
+						NeutralTeamExists = false
 						teams:Destroy()
 					end
 				end
@@ -258,9 +316,9 @@ if RetrofiyConfig.RetroCoreGui then
 		local SpecialPlayer = SpecialPlayers[player.UserId]
 
 		if SpecialPlayer then
-			--Icon.Image = "rbxassetid://" .. SpecialPlayer
+			Icon.Image = "rbxassetid://" .. SpecialPlayer
 		elseif player.MembershipType == Enum.MembershipType.Premium then
-			--Icon.Image = "rbxassetid://" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"]
+			Icon.Image = "rbxassetid://" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"]
 		end
 	end
 
@@ -286,6 +344,35 @@ end
 if RetrofiyConfig.RetroWorkspace then
 	sethiddenproperty(workspace.Terrain, "Decoration", false)
 	MaterialService.Use2022Materials = false
+end
+
+if RetrofiyConfig.RetroCharacters then
+	local function ConvertCharacter(object)
+		if object:IsA("Humanoid") then
+			RunService.RenderStepped:Wait()
+
+			object.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
+
+			object.Changed:Connect(function()
+				object.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
+			end)
+		elseif object:IsA("Sound") and object.SoundId == "rbxasset://sounds/uuhhh.mp3" then
+			object:GetPropertyChangedSignal("Playing"):Connect(function()
+				object:Stop()
+				local ClientAudio = Instance.new("Sound")
+				ClientAudio.SoundId = "rbxassetid://5143383166"
+				ClientAudio.TimePosition = 0.5
+				ClientAudio.Parent = object.Parent
+				ClientAudio:Play()
+			end)
+		end
+	end
+
+	for _, objects in pairs(workspace:GetDescendants()) do
+		ConvertCharacter(objects)
+	end
+
+	workspace.DescendantAdded:Connect(ConvertCharacter)
 end
 
 RunService:Set3dRenderingEnabled(true)
