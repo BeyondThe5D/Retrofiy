@@ -184,17 +184,27 @@ if RetrofiyConfig.RetroCoreGui then
 			HealthFill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
 		end)
 	end
-	
+
 	local function TogglePlayerlist()
 		if CanTogglePlayerlist then
-			PlayerlistContainer.Visible = not PlayerlistContainer.Visible
-			ChosenPlayerlistVisibility = PlayerlistContainer.Visible
+			local Visibility = not PlayerlistContainer.Visible
+			
+			PlayerlistContainer.Visible = Visibility
+			ChosenPlayerlistVisibility = Visibility
 		end
 	end
-
+	
+	local BackpackTextures = {
+		[true] = 10490800273,
+		[false] = 10488415707
+	}
+	
 	local Settings = CreateIcon(UDim2.new(0, 32, 0, 25), 10488455495, 0)
 	local Chat = CreateIcon(UDim2.new(0, 28, 0, 27), 10488448895, 0)
 	local Backpack = CreateIcon(UDim2.new(0, 22, 0, 28), 10488415707, 0)
+	Backpack.MouseButton1Down:Connect(function()
+		-- Toggle backpack here
+	end)
 
 	AttachHumanoidToHealthBar(Humanoid)
 
@@ -349,6 +359,10 @@ if RetrofiyConfig.RetroCoreGui then
 		if PlayerlistContainer:FindFirstChild(player.UserId) then
 			PlayerlistContainer[player.UserId]:Destroy()
 		end
+	end)
+	
+	CoreGui.RobloxGui.Backpack.Inventory.Changed:Connect(function()
+		Backpack.ImageLabel.Image = "rbxassetid://" .. BackpackTextures[CoreGui.RobloxGui.Backpack.Inventory.Visible]
 	end)
 	
 	RunService.Heartbeat:Connect(function()
