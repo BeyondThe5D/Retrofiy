@@ -11,6 +11,7 @@ Things I need to look into:
 - Pause, chat and backpack buttons on top bar
 - Health bar changes colour when lowered
 - Leaderstats
+- Display names on playerlist in alphabetical order
 
 (List will probably get better with more updates!)
 
