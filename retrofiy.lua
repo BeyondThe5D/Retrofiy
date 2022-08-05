@@ -33,6 +33,7 @@ end
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
 local MaterialService = game:GetService("MaterialService")
+local StarterGui = game:GetService("StarterGui")
 local Teams = game:GetService("Teams")
 local CoreGui = game:GetService("CoreGui")
 local RunService = game:GetService("RunService")
@@ -99,6 +100,9 @@ if RetrofiyConfig.RetroCoreGui then
 		[3456503282] = 10476529431
 	}
 
+	local CanTogglePlayerlist = true
+	local ChosenPlayerlistVisibility = CanTogglePlayerlist
+
 	CoreGui:WaitForChild("ThemeProvider").Enabled = false
 	CoreGui.PlayerList.Enabled = false
 
@@ -158,7 +162,7 @@ if RetrofiyConfig.RetroCoreGui then
 	UIListLayout.FillDirection = Enum.FillDirection.Horizontal
 	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	UIListLayout.Parent = IconsFolder
-	
+
 	local function CreateIcon(size, image, hoverimage)
 		local Button = Instance.new("ImageButton")
 		Button.BackgroundTransparency = 1
@@ -173,31 +177,38 @@ if RetrofiyConfig.RetroCoreGui then
 		Image.Parent = Button
 		return Button
 	end
-	
+
 	local function AttachHumanoidToHealthBar(humanoid)
 		HealthFill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
 		humanoid.HealthChanged:Connect(function()
 			HealthFill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
 		end)
 	end
+	
+	local function TogglePlayerlist()
+		if CanTogglePlayerlist then
+			PlayerlistContainer.Visible = not PlayerlistContainer.Visible
+			ChosenPlayerlistVisibility = PlayerlistContainer.Visible
+		end
+	end
 
 	local Settings = CreateIcon(UDim2.new(0, 32, 0, 25), 10488455495, 0)
 	local Chat = CreateIcon(UDim2.new(0, 28, 0, 27), 10488448895, 0)
 	local Backpack = CreateIcon(UDim2.new(0, 22, 0, 28), 10488415707, 0)
-	
+
 	AttachHumanoidToHealthBar(Humanoid)
-	
+
 	NameContainer.MouseButton1Down:Connect(function()
-		PlayerlistContainer.Visible = not PlayerlistContainer.Visible
+		TogglePlayerlist()
 	end)
-	
+
 	Player.CharacterAdded:Connect(function(character)
 		AttachHumanoidToHealthBar(character:WaitForChild("Humanoid"))
 	end)
 
 	UserInputService.InputBegan:Connect(function(input)
 		if input.KeyCode == Enum.KeyCode.Tab then
-			PlayerlistContainer.Visible = not PlayerlistContainer.Visible
+			TogglePlayerlist()
 		end
 	end)
 
@@ -339,10 +350,22 @@ if RetrofiyConfig.RetroCoreGui then
 			PlayerlistContainer[player.UserId]:Destroy()
 		end
 	end)
+	
+	RunService.Heartbeat:Connect(function()
+		if not StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList) then
+			CanTogglePlayerlist = false
+			PlayerlistContainer.Visible = false
+		else
+			if not CanTogglePlayerlist then
+				CanTogglePlayerlist = true
+				PlayerlistContainer.Visible = ChosenPlayerlistVisibility
+			end
+		end
+	end)
 end
 
 if RetrofiyConfig.RetroWorkspace then
-	sethiddenproperty(workspace.Terrain, "Decoration", false)
+	sethiddenproperty(workspace:FindFirstChildOfClass("Terrain"), "Decoration", false)
 	MaterialService.Use2022Materials = false
 end
 
