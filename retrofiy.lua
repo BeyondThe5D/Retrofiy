@@ -22,7 +22,7 @@
 local RetrofiyConfig = {
 	RetroLighting = true, -- [L] -- Force disables lighting properties that weren't in 2016, uses compatibility Techology and deletes effects not seen in 2016
 	RetroCoreGui = true, -- [R] -- Replaces the Core Gui with a 2016 Core Gui (Playerlist, topbar, etc)
-	RetroWorkspace = true, -- [R] -- Makes the game world look like 2016
+	RetroWorkspace = true, -- [R] -- Uses old materials, disables terrain decoration, only allows brick colors and returns 2016 studs
 	RetroCharacters = true -- [R] -- Displays health bars above the heads of characters & returns old oof sound
 }
 
@@ -34,6 +34,7 @@ local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
 local MaterialService = game:GetService("MaterialService")
 local StarterGui = game:GetService("StarterGui")
+local StarterPlayer = game:GetService("StarterPlayer")
 local Teams = game:GetService("Teams")
 local CoreGui = game:GetService("CoreGui")
 local RunService = game:GetService("RunService")
@@ -198,7 +199,7 @@ if RetrofiyConfig.RetroCoreGui then
 		[true] = 10490800273,
 		[false] = 10488415707
 	}
-	
+
 	local Settings = CreateIcon(UDim2.new(0, 32, 0, 25), 10488455495, 0)
 	local Chat = CreateIcon(UDim2.new(0, 28, 0, 27), 10488448895, 0)
 	local Backpack = CreateIcon(UDim2.new(0, 22, 0, 28), 10488415707, 0)
@@ -379,6 +380,38 @@ if RetrofiyConfig.RetroCoreGui then
 end
 
 if RetrofiyConfig.RetroWorkspace then
+	local Surface = {"BackSurface","BottomSurface","FrontSurface","LeftSurface","RightSurface","TopSurface"}
+	local _Faces = {"Back","Bottom","Front","Left","Right","Top"}
+
+	local function ConvertBasePart(basepart)
+		if StarterPlayer.LoadCharacterAppearance then
+			if basepart.Parent and Players:FindFirstChild(basepart.Parent.Name) then
+				if not Players[basepart.Parent.Name]:HasAppearanceLoaded() then
+					Players[basepart.Parent.Name].CharacterAppearanceLoaded:Wait()
+				end
+			end
+		end
+		
+		for i, x in pairs(Surface) do
+			if basepart:IsA("BasePart") and not basepart:FindFirstChildOfClass("MeshPart") and not basepart:FindFirstChildOfClass("SpecialMesh") and not basepart.Parent:FindFirstChildOfClass("Humanoid") and basepart[x] == Enum.SurfaceType.Studs then
+				local Studs = Instance.new("Texture")
+				Studs.Color3 = basepart.Color
+				Studs.Color3 = Color3.new(Studs.Color3.R * 2, Studs.Color3.G * 2, Studs.Color3.B * 2)
+				Studs.Texture = "rbxassetid://7027211371"
+				Studs.Face = _Faces[i]
+				Studs.Parent = basepart
+			end
+		end
+	end
+
+	for _, baseparts in pairs(workspace:GetDescendants()) do
+		ConvertBasePart(baseparts)
+	end
+
+	workspace.DescendantAdded:Connect(function(basepart)
+		ConvertBasePart(basepart)
+	end)
+
 	sethiddenproperty(workspace:FindFirstChildOfClass("Terrain"), "Decoration", false)
 	MaterialService.Use2022Materials = false
 end
