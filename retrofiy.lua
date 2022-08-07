@@ -46,6 +46,11 @@ local Humanoid = Character:WaitForChild("Humanoid")
 
 local MaxInteger = 2147483647
 
+local function ImprovedKeyPress(key)
+	keypress(key)
+	keyrelease(key)
+end
+
 RunService:Set3dRenderingEnabled(false)
 
 if RetrofiyConfig.RetroLighting then
@@ -96,9 +101,13 @@ if RetrofiyConfig.RetroCoreGui then
 		["67"] = "10475942003",
 		["0"] = "10475943080"
 	}
+	local Icons = {
+		["Developer"] = 10476529431,
+		["YouTuber"] = 10515678373
+	}
 	local SpecialPlayers = {
-		[2601528367] = 10476529431,
-		[3456503282] = 10476529431
+		[2601528367] = Icons["Developer"],
+		[3456503282] = Icons["YouTuber"]
 	}
 
 	local CanTogglePlayerlist = true
@@ -194,7 +203,7 @@ if RetrofiyConfig.RetroCoreGui then
 			ChosenPlayerlistVisibility = Visibility
 		end
 	end
-
+	
 	local BackpackTextures = {
 		[true] = 10490800273,
 		[false] = 10488415707
@@ -204,7 +213,7 @@ if RetrofiyConfig.RetroCoreGui then
 	local Chat = CreateIcon(UDim2.new(0, 28, 0, 27), 10488448895, 0)
 	local Backpack = CreateIcon(UDim2.new(0, 22, 0, 28), 10488415707, 0)
 	Backpack.MouseButton1Down:Connect(function()
-		keypress(0xDF)
+		ImprovedKeyPress(0xDF)
 	end)
 
 	AttachHumanoidToHealthBar(Humanoid)
@@ -380,26 +389,32 @@ if RetrofiyConfig.RetroCoreGui then
 end
 
 if RetrofiyConfig.RetroWorkspace then
-	local Surface = {"BackSurface","BottomSurface","FrontSurface","LeftSurface","RightSurface","TopSurface"}
-	local _Faces = {"Back","Bottom","Front","Left","Right","Top"}
+	local Surface = {"BackSurface", "BottomSurface", "FrontSurface", "LeftSurface", "RightSurface", "TopSurface"}
+	local _Faces = {"Back", "Bottom", "Front", "Left", "Right", "Top"}
 
 	local function ConvertBasePart(basepart)
-		if StarterPlayer.LoadCharacterAppearance then
-			if basepart.Parent and Players:FindFirstChild(basepart.Parent.Name) then
+		if basepart.Parent and Players:FindFirstChild(basepart.Parent.Name) then
+			RunService.RenderStepped:Wait()
+			if StarterPlayer.LoadCharacterAppearance then
 				if not Players[basepart.Parent.Name]:HasAppearanceLoaded() then
 					Players[basepart.Parent.Name].CharacterAppearanceLoaded:Wait()
 				end
 			end
 		end
-		
+
 		for i, x in pairs(Surface) do
-			if basepart:IsA("BasePart") and not basepart:FindFirstChildOfClass("MeshPart") and not basepart:FindFirstChildOfClass("SpecialMesh") and not basepart.Parent:FindFirstChildOfClass("Humanoid") and basepart[x] == Enum.SurfaceType.Studs then
+			if basepart:IsA("BasePart") and not basepart:FindFirstChildOfClass("MeshPart") and not basepart:FindFirstChildOfClass("SpecialMesh") and not basepart.Parent:FindFirstChildOfClass("Humanoid") and basepart.Material == Enum.Material.Plastic and basepart[x] == Enum.SurfaceType.Studs then
 				local Studs = Instance.new("Texture")
 				Studs.Color3 = basepart.Color
 				Studs.Color3 = Color3.new(Studs.Color3.R * 2, Studs.Color3.G * 2, Studs.Color3.B * 2)
 				Studs.Texture = "rbxassetid://7027211371"
+				Studs.Transparency = basepart.Transparency
 				Studs.Face = _Faces[i]
 				Studs.Parent = basepart
+				
+				basepart.Changed:Connect(function()
+					Studs.Transparency = basepart.Transparency
+				end)
 			end
 		end
 	end
