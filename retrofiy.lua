@@ -107,7 +107,7 @@ if RetrofiyConfig.RetroCoreGui then
 	}
 	local SpecialPlayers = {
 		[2601528367] = Icons["Developer"],
-		[3456503282] = Icons["YouTuber"]
+		[2606489681] = Icons["YouTuber"]
 	}
 
 	local CanTogglePlayerlist = true
@@ -394,7 +394,6 @@ if RetrofiyConfig.RetroWorkspace then
 
 	local function ConvertBasePart(basepart)
 		if basepart.Parent and Players:FindFirstChild(basepart.Parent.Name) then
-			RunService.RenderStepped:Wait()
 			if StarterPlayer.LoadCharacterAppearance then
 				if not Players[basepart.Parent.Name]:HasAppearanceLoaded() then
 					Players[basepart.Parent.Name].CharacterAppearanceLoaded:Wait()
