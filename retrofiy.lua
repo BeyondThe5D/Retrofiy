@@ -375,7 +375,7 @@ if RetrofiyConfig.RetroCoreGui then
 		Backpack.ImageLabel.Image = "rbxassetid://" .. BackpackTextures[CoreGui.RobloxGui.Backpack.Inventory.Visible]
 	end)
 
-	RunService.Heartbeat:Connect(function()
+	RunService.Heartbeat:Connect(function() --  This shit is the worst code here
 		if not StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList) then
 			CanTogglePlayerlist = false
 			PlayerlistContainer.Visible = false
@@ -385,6 +385,9 @@ if RetrofiyConfig.RetroCoreGui then
 				PlayerlistContainer.Visible = ChosenPlayerlistVisibility
 			end
 		end
+		
+		Backpack.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
+		Chat.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Chat)
 	end)
 end
 
@@ -399,6 +402,7 @@ if RetrofiyConfig.RetroWorkspace then
 					Players[basepart.Parent.Name].CharacterAppearanceLoaded:Wait()
 				end
 			end
+			basepart.Parent:WaitForChild("Humanoid", 1)
 		end
 
 		for i, x in pairs(Surface) do
