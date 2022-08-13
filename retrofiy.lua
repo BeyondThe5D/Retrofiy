@@ -45,6 +45,7 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 
 local Player = Players.LocalPlayer
+local Mouse = Player:GetMouse()
 local Character = Player.Character or Player.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
 
@@ -119,7 +120,9 @@ if RetrofiyConfig.RetroCoreGui then
 
 	CoreGui:WaitForChild("ThemeProvider").Enabled = false
 	CoreGui.PlayerList.Enabled = false
-
+	
+	Mouse.Icon = "rbxassetid://10575892276"
+	
 	local Topbar = Instance.new("Frame")
 	Topbar.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
 	Topbar.BackgroundTransparency = 0.5
@@ -487,7 +490,6 @@ if RetrofiyConfig.RetroChat then
 		end
 
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar.Focused:Connect(function()
-			ChatFrame.ChatBarParentFrame.Visible = true
 			ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 40)
 			ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.Position = UDim2.new(0, 7, 0, 6)
 			repeat
@@ -497,12 +499,6 @@ if RetrofiyConfig.RetroChat then
 			not ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar:IsFocused()
 			ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 32)
 			ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.Position = UDim2.new(0, 7, 0, 2)
-		end)
-
-		ChatFrame.ChatChannelParentFrame.Changed:Connect(function()
-			if ChatFrame.ChatChannelParentFrame.BackgroundTransparency > 0.6 and not ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar:IsFocused() then
-				ChatFrame.ChatBarParentFrame.Visible = false
-			end
 		end)
 	end
 end
