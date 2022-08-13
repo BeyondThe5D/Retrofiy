@@ -120,9 +120,9 @@ if RetrofiyConfig.RetroCoreGui then
 
 	CoreGui:WaitForChild("ThemeProvider").Enabled = false
 	CoreGui.PlayerList.Enabled = false
-	
+
 	Mouse.Icon = "rbxassetid://10575892276"
-	
+
 	local Topbar = Instance.new("Frame")
 	Topbar.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
 	Topbar.BackgroundTransparency = 0.5
@@ -221,6 +221,7 @@ if RetrofiyConfig.RetroCoreGui then
 	local Backpack = CreateIcon(UDim2.new(0, 22, 0, 28), 10488415707, 0)
 	Backpack.MouseButton1Down:Connect(function()
 		ImprovedKeyPress(0xDF)
+		ImprovedKeyPress(0xC0)
 	end)
 
 	AttachHumanoidToHealthBar(Humanoid)
