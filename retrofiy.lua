@@ -14,16 +14,19 @@
 --[[
 	Keys:
 	
-	[R] - Recommended
-	[B] - Buggy
-	[L] - Low compatibility (May not work perfectly on all games)
+	[R] - Recommended, You should keep it on for accuracy sake
+	[B] - Buggy, isn't fully implemented and/or may not be accurate
+	[L] - Low compatibility, works perfectly fine on some games
+	[O] - Optional, improvement or a personal preference but isn't accurate
 --]]
 
 local RetrofiyConfig = {
 	RetroLighting = true, -- [L] -- Force disables lighting properties that weren't in 2016, uses compatibility Techology and deletes effects not seen in 2016
-	RetroCoreGui = true, -- [R] -- Replaces the Core Gui with a 2016 Core Gui (Playerlist, topbar, etc)
+	RetroCoreGui = true, -- [B] -- Replaces the Core Gui with a 2016 Core Gui (Playerlist, topbar, etc)
 	RetroWorkspace = true, -- [R] -- Uses old materials, disables terrain decoration, only allows brick colors and returns 2016 studs
-	RetroCharacters = true -- [R] -- Displays health bars above the heads of characters & returns old oof sound
+	RetroCharacters = true, -- [R] -- Displays health bars above the heads of characters & returns old oof sound
+	RetroChat = true, -- [B] -- If default chat is enabled it will convert it to the 2016 chat
+	BCOnly = false -- [O] -- Makes all premium players appear as BC players instead of it being random
 }
 
 if not game:IsLoaded() then
@@ -36,6 +39,7 @@ local MaterialService = game:GetService("MaterialService")
 local StarterGui = game:GetService("StarterGui")
 local StarterPlayer = game:GetService("StarterPlayer")
 local Teams = game:GetService("Teams")
+local Chat = game:GetService("Chat")
 local CoreGui = game:GetService("CoreGui")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -203,7 +207,7 @@ if RetrofiyConfig.RetroCoreGui then
 			ChosenPlayerlistVisibility = Visibility
 		end
 	end
-	
+
 	local BackpackTextures = {
 		[true] = 10490800273,
 		[false] = 10488415707
@@ -385,7 +389,7 @@ if RetrofiyConfig.RetroCoreGui then
 				PlayerlistContainer.Visible = ChosenPlayerlistVisibility
 			end
 		end
-		
+
 		Backpack.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
 		Chat.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Chat)
 	end)
@@ -414,7 +418,7 @@ if RetrofiyConfig.RetroWorkspace then
 				Studs.Transparency = basepart.Transparency
 				Studs.Face = _Faces[i]
 				Studs.Parent = basepart
-				
+
 				basepart.Changed:Connect(function()
 					Studs.Transparency = basepart.Transparency
 				end)
@@ -461,6 +465,44 @@ if RetrofiyConfig.RetroCharacters then
 	end
 
 	workspace.DescendantAdded:Connect(ConvertCharacter)
+end
+
+if RetrofiyConfig.RetroChat then
+	if Chat.LoadDefaultChat then
+		local ChatFrame = Player.PlayerGui.Chat.Frame
+		ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 32)
+		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Position = UDim2.new(0, 7, 0, 5)
+		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Size = UDim2.new(1, -14, 1, -10)
+		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.Position = UDim2.new(0, 7, 0, 2)
+		ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+		
+		for _, messages in pairs(ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller:GetChildren()) do
+			local TextLabel = messages:FindFirstChildOfClass("TextLabel")
+			
+			if TextLabel and TextLabel.Text == "Chat '/?' or '/help' for a list of chat commands." then
+				TextLabel.Text = "Please chat '/?' for a list of commands"
+			end
+		end
+		
+		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar.Focused:Connect(function()
+			ChatFrame.ChatBarParentFrame.Visible = true
+			ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 40)
+			ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.Position = UDim2.new(0, 7, 0, 6)
+			repeat
+				ChatFrame.ChatBarParentFrame.Frame.BoxFrame.BackgroundTransparency = 0.1
+				ChatFrame.ChatBarParentFrame.Frame.BoxFrame:GetPropertyChangedSignal("BackgroundTransparency"):Wait()
+			until
+			not ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar:IsFocused()
+			ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 32)
+			ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.Position = UDim2.new(0, 7, 0, 2)
+		end)
+		
+		ChatFrame.ChatChannelParentFrame.Changed:Connect(function()
+			if ChatFrame.ChatChannelParentFrame.BackgroundTransparency > 0.6 and not ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar:IsFocused() then
+				ChatFrame.ChatBarParentFrame.Visible = false
+			end
+		end)
+	end
 end
 
 RunService:Set3dRenderingEnabled(true)
