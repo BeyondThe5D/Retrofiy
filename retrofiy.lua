@@ -21,7 +21,7 @@
 --]]
 
 local RetrofiyConfig = {
-	RetroLighting = false, -- [L] -- Force disables lighting properties that weren't in 2016, uses compatibility Techology and deletes effects not seen in 2016
+	RetroLighting = true, -- [R] -- Force disables lighting properties that weren't in 2016, uses compatibility Techology and deletes effects not seen in 2016
 	RetroCoreGui = true, -- [B] -- Replaces the Core Gui with a 2016 Core Gui (Playerlist, topbar, etc)
 	RetroWorkspace = true, -- [R] -- Uses old materials, disables terrain decoration, only allows brick colors and returns 2016 studs
 	RetroCharacters = true, -- [R] -- Displays health bars above the heads of characters & returns old oof sound
@@ -70,8 +70,8 @@ if RetrofiyConfig.RetroLighting then
 	}
 
 	local function RemoveEffect(effect)
-		RunService.RenderStepped:Wait()
 		if table.find(RestrictedEffects, effect.ClassName) then
+			RunService.RenderStepped:Wait()
 			effect:Destroy()
 		end
 	end
@@ -100,7 +100,7 @@ end
 if RetrofiyConfig.RetroCoreGui then
 	local RetroGui = Instance.new("ScreenGui")
 	RetroGui.Parent = CoreGui
-	
+
 	local Memberships = {
 		["33"] = "10475940965",
 		["67"] = "10475942003",
@@ -118,7 +118,7 @@ if RetrofiyConfig.RetroCoreGui then
 
 	local CanTogglePlayerlist = true
 	local ChosenPlayerlistVisibility = CanTogglePlayerlist
-	
+
 	CoreGui:WaitForChild("ThemeProvider").Enabled = false
 	CoreGui.PlayerList.Enabled = false
 
@@ -238,7 +238,7 @@ if RetrofiyConfig.RetroCoreGui then
 			TogglePlayerlist()
 		end
 	end)
-	
+
 	--[[
 	local FakeMouse = Instance.new("ImageLabel")
 	FakeMouse.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -281,7 +281,7 @@ if RetrofiyConfig.RetroCoreGui then
 		FakeMouse.Position = UDim2.new(0, Mouse.X, 0, Mouse.Y)
 	end)
 	--]]
-	
+
 	local TeamsOrderd = {}
 	local NeutralTeamExists = false
 	local Number = 0
