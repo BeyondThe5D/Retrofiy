@@ -358,7 +358,9 @@ if RetrofiyConfig.RetroCoreGui then
 	end
 
 	for _, teams in pairs(Teams:GetChildren()) do
-		AddTeamToPlayerlist(teams.Name, teams.TeamColor.Color)
+		if teams:IsA("Team") then
+			AddTeamToPlayerlist(teams.Name, teams.TeamColor.Color)
+		end
 	end
 
 	for _, players in pairs(Players:GetPlayers()) do
@@ -475,15 +477,15 @@ if RetrofiyConfig.RetroChat then
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Size = UDim2.new(1, -14, 1, -10)
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.Position = UDim2.new(0, 7, 0, 2)
 		ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
-		
+
 		for _, messages in pairs(ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller:GetChildren()) do
 			local TextLabel = messages:FindFirstChildOfClass("TextLabel")
-			
+
 			if TextLabel and TextLabel.Text == "Chat '/?' or '/help' for a list of chat commands." then
 				TextLabel.Text = "Please chat '/?' for a list of commands"
 			end
 		end
-		
+
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar.Focused:Connect(function()
 			ChatFrame.ChatBarParentFrame.Visible = true
 			ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 40)
@@ -496,7 +498,7 @@ if RetrofiyConfig.RetroChat then
 			ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 32)
 			ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.Position = UDim2.new(0, 7, 0, 2)
 		end)
-		
+
 		ChatFrame.ChatChannelParentFrame.Changed:Connect(function()
 			if ChatFrame.ChatChannelParentFrame.BackgroundTransparency > 0.6 and not ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar:IsFocused() then
 				ChatFrame.ChatBarParentFrame.Visible = false
