@@ -21,7 +21,7 @@
 --]]
 
 local RetrofiyConfig = {
-	RetroLighting = true, -- [L] -- Force disables lighting properties that weren't in 2016, uses compatibility Techology and deletes effects not seen in 2016
+	RetroLighting = false, -- [L] -- Force disables lighting properties that weren't in 2016, uses compatibility Techology and deletes effects not seen in 2016
 	RetroCoreGui = true, -- [B] -- Replaces the Core Gui with a 2016 Core Gui (Playerlist, topbar, etc)
 	RetroWorkspace = true, -- [R] -- Uses old materials, disables terrain decoration, only allows brick colors and returns 2016 studs
 	RetroCharacters = true, -- [R] -- Displays health bars above the heads of characters & returns old oof sound
@@ -100,7 +100,7 @@ end
 if RetrofiyConfig.RetroCoreGui then
 	local RetroGui = Instance.new("ScreenGui")
 	RetroGui.Parent = CoreGui
-
+	
 	local Memberships = {
 		["33"] = "10475940965",
 		["67"] = "10475942003",
@@ -112,16 +112,15 @@ if RetrofiyConfig.RetroCoreGui then
 	}
 	local SpecialPlayers = {
 		[2601528367] = Icons["Developer"],
-		[2606489681] = Icons["YouTuber"]
+		[2606489681] = Icons["YouTuber"],
+		[42049882] = "rbxassetid://10582975516"
 	}
 
 	local CanTogglePlayerlist = true
 	local ChosenPlayerlistVisibility = CanTogglePlayerlist
-
+	
 	CoreGui:WaitForChild("ThemeProvider").Enabled = false
 	CoreGui.PlayerList.Enabled = false
-
-	Mouse.Icon = "rbxassetid://10575892276"
 
 	local Topbar = Instance.new("Frame")
 	Topbar.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
@@ -239,7 +238,50 @@ if RetrofiyConfig.RetroCoreGui then
 			TogglePlayerlist()
 		end
 	end)
+	
+	--[[
+	local FakeMouse = Instance.new("ImageLabel")
+	FakeMouse.AnchorPoint = Vector2.new(0.5, 0.5)
+	FakeMouse.BackgroundTransparency = 1
+	FakeMouse.Size = UDim2.new(0, 64, 0, 64)
+	FakeMouse.Image = "rbxassetid://10575892276"
+	FakeMouse.Parent = RetroGui
+	
+	local function DetectMouseHover(gui)
+		if gui.ClassName:lower():find("button") then
+			gui.MouseEnter:Connect(function()
+				FakeMouse.Image = "rbxassetid://10582925132"
+			end)
 
+			gui.MouseLeave:Connect(function()
+				FakeMouse.Image = "rbxassetid://10575892276"
+			end)
+		end
+	end
+	
+	for _, objects in pairs(CoreGui:GetDescendants()) do
+		DetectMouseHover(objects)
+	end
+	
+	CoreGui.DescendantAdded:Connect(function(object)
+		DetectMouseHover(object)
+	end)
+	
+	for _, objects in pairs(Player.PlayerGui:GetDescendants()) do
+		DetectMouseHover(objects)
+	end
+	
+	Player.PlayerGui.DescendantAdded:Connect(function(object)
+		DetectMouseHover(object)
+	end)
+	
+	UserInputService.MouseIconEnabled = false
+	
+	Mouse.Move:Connect(function()
+		FakeMouse.Position = UDim2.new(0, Mouse.X, 0, Mouse.Y)
+	end)
+	--]]
+	
 	local TeamsOrderd = {}
 	local NeutralTeamExists = false
 	local Number = 0
