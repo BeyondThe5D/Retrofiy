@@ -399,7 +399,11 @@ if RetrofiyConfig.RetroCoreGui then
 		if SpecialPlayer then
 			Icon.Image = "rbxassetid://" .. SpecialPlayer
 		elseif player.MembershipType == Enum.MembershipType.Premium then
-			Icon.Image = "rbxassetid://" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"]
+			if RetrofiyConfig.BCOnly then
+				Icon.Image = "rbxassetid://10475940965"
+			else
+				Icon.Image = "rbxassetid://" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"]
+			end
 		end
 	end
 
