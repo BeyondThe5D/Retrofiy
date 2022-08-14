@@ -51,9 +51,11 @@ local Humanoid = Character:WaitForChild("Humanoid")
 
 local MaxInteger = 2147483647
 
-local function ImprovedKeyPress(key)
-	keypress(key)
-	keyrelease(key)
+local function ImprovedKeyPress(keys)
+	for _, key in pairs(keys) do
+		keypress(key)
+		keyrelease(key)
+	end
 end
 
 RunService:Set3dRenderingEnabled(false)
@@ -210,17 +212,26 @@ if RetrofiyConfig.RetroCoreGui then
 		end
 	end
 
+	local ChatTextures = {
+		[true] = 10588179517,
+		[false] = 10488448895
+	}
 	local BackpackTextures = {
 		[true] = 10490800273,
 		[false] = 10488415707
 	}
 
-	local Settings = CreateIcon(UDim2.new(0, 32, 0, 25), 10488455495, 0)
-	local Chat = CreateIcon(UDim2.new(0, 28, 0, 27), 10488448895, 0)
-	local Backpack = CreateIcon(UDim2.new(0, 22, 0, 28), 10488415707, 0)
-	Backpack.MouseButton1Down:Connect(function()
-		ImprovedKeyPress(0xDF)
-		ImprovedKeyPress(0xC0)
+	local SettingsButton = CreateIcon(UDim2.new(0, 32, 0, 25), 10488455495, 0)
+	local ChatButton = CreateIcon(UDim2.new(0, 28, 0, 27), ChatTextures[Player.PlayerGui.Chat.Frame.Visible], 0)
+	local BackpackButton = CreateIcon(UDim2.new(0, 22, 0, 28), BackpackTextures[CoreGui.RobloxGui.Backpack.Inventory.Visible], 0)
+	
+	ChatButton.MouseButton1Down:Connect(function()
+		if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then
+			Player.PlayerGui.Chat.Frame.Visible = not Player.PlayerGui.Chat.Frame.Visible
+		end
+	end)
+	BackpackButton.MouseButton1Down:Connect(function()
+		ImprovedKeyPress({0xDF, 0xC0})
 	end)
 
 	AttachHumanoidToHealthBar(Humanoid)
@@ -427,8 +438,14 @@ if RetrofiyConfig.RetroCoreGui then
 		end
 	end)
 
+	if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then
+		Player.PlayerGui.Chat.Frame.Changed:Connect(function()
+			ChatButton.ImageLabel.Image = "rbxassetid://" .. ChatTextures[Player.PlayerGui.Chat.Frame.Visible]
+		end)
+	end
+
 	CoreGui.RobloxGui.Backpack.Inventory.Changed:Connect(function()
-		Backpack.ImageLabel.Image = "rbxassetid://" .. BackpackTextures[CoreGui.RobloxGui.Backpack.Inventory.Visible]
+		BackpackButton.ImageLabel.Image = "rbxassetid://" .. BackpackTextures[CoreGui.RobloxGui.Backpack.Inventory.Visible]
 	end)
 
 	RunService.Heartbeat:Connect(function() --  This shit is the worst code here
@@ -442,8 +459,8 @@ if RetrofiyConfig.RetroCoreGui then
 			end
 		end
 
-		Backpack.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
-		Chat.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Chat)
+		BackpackButton.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
+		ChatButton.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Chat)
 	end)
 end
 
@@ -520,7 +537,7 @@ if RetrofiyConfig.RetroCharacters then
 end
 
 if RetrofiyConfig.RetroChat then
-	if Chat.LoadDefaultChat then
+	if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then
 		local ChatFrame = Player.PlayerGui.Chat.Frame
 		ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 32)
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Position = UDim2.new(0, 7, 0, 5)
