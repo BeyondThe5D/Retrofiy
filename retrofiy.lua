@@ -221,10 +221,15 @@ if RetrofiyConfig.RetroCoreGui then
 		[false] = 10488415707
 	}
 
+	local CoreChatBools = {
+		["rbxasset://textures/ui/TopBar/chatOn.png"] = ChatTextures[true],
+		["rbxasset://textures/ui/TopBar/chatOff.png"] = ChatTextures[false]
+	}
+
 	local SettingsButton = CreateIcon(UDim2.new(0, 32, 0, 25), 10488455495, 0)
-	local ChatButton = CreateIcon(UDim2.new(0, 28, 0, 27), ChatTextures[Player.PlayerGui.Chat.Frame.Visible], 0)
+	local ChatButton = CreateIcon(UDim2.new(0, 28, 0, 27), CoreChatBools[CoreGui.ThemeProvider.TopBarFrame.LeftFrame.ChatIcon.Background.Icon.Image], 0)
 	local BackpackButton = CreateIcon(UDim2.new(0, 22, 0, 28), BackpackTextures[CoreGui.RobloxGui.Backpack.Inventory.Visible], 0)
-	
+
 	ChatButton.MouseButton1Down:Connect(function()
 		if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then
 			Player.PlayerGui.Chat.Frame.Visible = not Player.PlayerGui.Chat.Frame.Visible
