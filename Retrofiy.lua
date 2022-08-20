@@ -109,7 +109,7 @@ if RetrofiyConfig.RetroCoreGui then
 		["0"] = "10475943080"
 	}
 	local Icons = {
-		["Developer"] = 10476529431,
+		["Developer"] = 10653988117,
 		["YouTuber"] = 10515678373
 	}
 	local SpecialPlayers = {
