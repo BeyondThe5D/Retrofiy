@@ -14,7 +14,7 @@
 --[[
 	Keys:
 	
-	[R] - Recommended, You should keep it on for accuracy sake
+	[R] - Recommended, you should keep it on for accuracy sake and has no big/known issues
 	[B] - Buggy, isn't fully implemented and/or may not be accurate
 	[L] - Low compatibility, works perfectly fine on some games
 	[O] - Optional, improvement or a personal preference but isn't accurate
