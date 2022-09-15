@@ -51,7 +51,7 @@ local Humanoid = Character:WaitForChild("Humanoid")
 
 local MaxInteger = 2147483647
 
-local ReadOnlyProperties = {
+local BlacklistedProperties = {
 	"TimeOfDay"
 }
 
@@ -109,7 +109,7 @@ if RetrofiyConfig.RetroLighting then
 	Lighting.DescendantAdded:Connect(RemoveEffect)
 
 	Lighting.Changed:Connect(function(property)
-		if HasProperty(Lighting, property) and not table.find(ReadOnlyProperties, property) then
+		if HasProperty(Lighting, property) and not table.find(BlacklistedProperties, property) then
 			Lighting[property] = RestrictedLighting[property]
 		end
 	end)
