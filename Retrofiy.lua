@@ -51,6 +51,10 @@ local Humanoid = Character:WaitForChild("Humanoid")
 
 local MaxInteger = 2147483647
 
+local ReadOnlyProperties = {
+	"TimeOfDay"
+}
+
 local function ImprovedKeyPress(keys)
 	for _, key in pairs(keys) do
 		keypress(key)
@@ -105,7 +109,7 @@ if RetrofiyConfig.RetroLighting then
 	Lighting.DescendantAdded:Connect(RemoveEffect)
 
 	Lighting.Changed:Connect(function(property)
-		if HasProperty(Lighting, property) then
+		if HasProperty(Lighting, property) and not table.find(ReadOnlyProperties, property) then
 			Lighting[property] = RestrictedLighting[property]
 		end
 	end)
