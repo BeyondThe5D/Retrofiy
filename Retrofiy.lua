@@ -138,7 +138,7 @@ if RetrofiyConfig.RetroCoreGui then
 
 	local Topbar = Instance.new("Frame")
 	Topbar.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
-	Topbar.BackgroundTransparency = 0.5
+	Topbar.BackgroundTransparency = Player.PlayerGui:GetTopbarTransparency()
 	Topbar.BorderSizePixel = 0
 	Topbar.Position = UDim2.new(0, 0, 0, -36)
 	Topbar.Size = UDim2.new(1, 0, 0, 36)
