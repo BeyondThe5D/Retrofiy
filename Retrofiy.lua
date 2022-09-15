@@ -58,6 +58,20 @@ local function ImprovedKeyPress(keys)
 	end
 end
 
+local function HasProperty(object, property)
+	local Result = false
+
+	pcall(function()
+		local Property = object[property]
+		
+		if type(object[property]) ~= "userdata" then
+			Result = true
+		end
+	end)
+
+	return Result
+end
+
 RunService:Set3dRenderingEnabled(false)
 
 if RetrofiyConfig.RetroLighting then
@@ -91,10 +105,8 @@ if RetrofiyConfig.RetroLighting then
 	Lighting.DescendantAdded:Connect(RemoveEffect)
 
 	Lighting.Changed:Connect(function(property)
-		local Property = RestrictedLighting[property]
-
-		if Property then
-			Lighting[property] = Property
+		if HasProperty(Lighting, property) then
+			Lighting[property] = RestrictedLighting[property]
 		end
 	end)
 end
