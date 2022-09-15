@@ -478,7 +478,8 @@ if RetrofiyConfig.RetroCoreGui then
 				PlayerlistContainer.Visible = ChosenPlayerlistVisibility
 			end
 		end
-
+		
+		Topbar.BackgroundTransparency = Player.PlayerGui:GetTopbarTransparency()
 		BackpackButton.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
 		ChatButton.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Chat)
 	end)
