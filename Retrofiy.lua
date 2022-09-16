@@ -453,7 +453,7 @@ if RetrofiyConfig.RetroCoreGui then
 	CoreGui.RobloxGui.Backpack.Inventory.Changed:Connect(function()
 		BackpackButton.ImageLabel.Image = "rbxassetid://" .. BackpackTextures[CoreGui.RobloxGui.Backpack.Inventory.Visible]
 	end)
-	
+
 	local function ConvertScrollingFrame(scrollingframe)
 		scrollingframe.ScrollBarImageColor3 = Color3.fromRGB(56, 56, 56)
 		scrollingframe.ScrollBarImageTransparency = 0
@@ -462,19 +462,19 @@ if RetrofiyConfig.RetroCoreGui then
 			scrollingframe.ScrollBarImageTransparency = 0
 		end)
 	end
-	
+
 	for _, scrollingframes in pairs(game:GetDescendants()) do
 		if scrollingframes:IsA("ScrollingFrame") then
 			ConvertScrollingFrame(scrollingframes)
 		end
 	end
-	
+
 	workspace.DescendantAdded:Connect(function(scrollingframe)
 		if scrollingframe:IsA("ScrollingFrame") then
 			ConvertScrollingFrame(scrollingframe)
 		end
 	end)
-	
+
 	RunService.Heartbeat:Connect(function() --  This shit is the worst code here
 		if not StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList) then
 			CanTogglePlayerlist = false
@@ -503,7 +503,10 @@ if RetrofiyConfig.RetroWorkspace then
 					Players[basepart.Parent.Name].CharacterAppearanceLoaded:Wait()
 				end
 			end
-			basepart.Parent:WaitForChild("Humanoid", 1)
+
+			if basepart.Parent then
+				basepart.Parent:WaitForChild("Humanoid", 1)
+			end
 		end
 
 		for i, x in pairs(Surface) do
@@ -592,15 +595,15 @@ if RetrofiyConfig.RetroChat then
 			ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 32)
 			ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.Position = UDim2.new(0, 7, 0, 2)
 		end)
-		
+
 		local function UpdateBarThickness()
 			if ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller.ScrollBarThickness == 4 then
 				ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller.ScrollBarThickness = 7
 			end
 		end
-		
+
 		UpdateBarThickness()
-		
+
 		ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller:GetPropertyChangedSignal("ScrollBarThickness"):Connect(function(value)
 			UpdateBarThickness()
 		end)
