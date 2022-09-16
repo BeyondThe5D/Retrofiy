@@ -51,29 +51,11 @@ local Humanoid = Character:WaitForChild("Humanoid")
 
 local MaxInteger = 2147483647
 
-local BlacklistedProperties = {
-	"TimeOfDay"
-}
-
 local function ImprovedKeyPress(keys)
 	for _, key in pairs(keys) do
 		keypress(key)
 		keyrelease(key)
 	end
-end
-
-local function HasProperty(object, property)
-	local Result = false
-
-	pcall(function()
-		local Property = object[property]
-		
-		if type(object[property]) ~= "userdata" then
-			Result = true
-		end
-	end)
-
-	return Result
 end
 
 RunService:Set3dRenderingEnabled(false)
@@ -107,10 +89,12 @@ if RetrofiyConfig.RetroLighting then
 	end
 
 	Lighting.DescendantAdded:Connect(RemoveEffect)
-
+	
 	Lighting.Changed:Connect(function(property)
-		if HasProperty(Lighting, property) and not table.find(BlacklistedProperties, property) then
-			Lighting[property] = RestrictedLighting[property]
+		local Property = RestrictedLighting[property]
+		
+		if Property then
+			Lighting[property] = Property
 		end
 	end)
 end
@@ -478,7 +462,7 @@ if RetrofiyConfig.RetroCoreGui then
 				PlayerlistContainer.Visible = ChosenPlayerlistVisibility
 			end
 		end
-		
+
 		Topbar.BackgroundTransparency = Player.PlayerGui:GetTopbarTransparency()
 		BackpackButton.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
 		ChatButton.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Chat)
