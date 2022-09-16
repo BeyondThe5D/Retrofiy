@@ -114,6 +114,7 @@ if RetrofiyConfig.RetroCoreGui then
 	}
 	local SpecialPlayers = {
 		[2601528367] = Icons["Developer"],
+		[3897409161] = Icons["Developer"],
 		[42049882] = "rbxassetid://10582975516"
 	}
 
