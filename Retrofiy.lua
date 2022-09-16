@@ -51,9 +51,11 @@ local Humanoid = Character:WaitForChild("Humanoid")
 
 local MaxInteger = 2147483647
 
-local function ImprovedKeyPress(key1, key2)
-	keypress(key1)
-	keyrelease(key2)
+local function ImprovedKeyPress(keys)
+	for _, key in pairs(keys) do
+		keypress(key)
+		keyrelease(key)
+	end
 end
 
 RunService:Set3dRenderingEnabled(false)
@@ -233,7 +235,7 @@ if RetrofiyConfig.RetroCoreGui then
 		end
 	end)
 	BackpackButton.MouseButton1Down:Connect(function()
-		ImprovedKeyPress(0xDF, 0xC0)
+		ImprovedKeyPress({0xDF, 0xC0})
 	end)
 	NameContainer.MouseButton1Down:Connect(function()
 		TogglePlayerlist()
@@ -407,7 +409,7 @@ if RetrofiyConfig.RetroCoreGui then
 		end)
 
 		local SpecialPlayer = SpecialPlayers[player.UserId]
-		
+
 		if SpecialPlayer then
 			Icon.Image = "rbxassetid://" .. SpecialPlayer
 		elseif player:IsInGroup(1200769) then
@@ -483,7 +485,7 @@ if RetrofiyConfig.RetroWorkspace then
 		end
 
 		for i, x in pairs(Surface) do
-			if basepart:IsA("BasePart") and not basepart:FindFirstChildOfClass("MeshPart") and not basepart:FindFirstChildOfClass("SpecialMesh") and not basepart.Parent:FindFirstChildOfClass("Humanoid") and basepart.Material == Enum.Material.Plastic and basepart[x] == Enum.SurfaceType.Studs then
+			if basepart:IsA("BasePart") and not basepart:FindFirstChildOfClass("MeshPart") and not basepart:FindFirstChildOfClass("SpecialMesh") and (script.Parent and not basepart.Parent:FindFirstChildOfClass("Humanoid")) and basepart.Material == Enum.Material.Plastic and basepart[x] == Enum.SurfaceType.Studs then
 				local Studs = Instance.new("Texture")
 				Studs.Color3 = basepart.Color
 				Studs.Color3 = Color3.new(Studs.Color3.R * 2, Studs.Color3.G * 2, Studs.Color3.B * 2)
