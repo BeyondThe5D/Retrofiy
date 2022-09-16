@@ -51,11 +51,9 @@ local Humanoid = Character:WaitForChild("Humanoid")
 
 local MaxInteger = 2147483647
 
-local function ImprovedKeyPress(keys)
-	for _, key in pairs(keys) do
-		keypress(key)
-		keyrelease(key)
-	end
+local function ImprovedKeyPress(key1, key2)
+	keypress(key1)
+	keyrelease(key2)
 end
 
 RunService:Set3dRenderingEnabled(false)
@@ -235,15 +233,14 @@ if RetrofiyConfig.RetroCoreGui then
 		end
 	end)
 	BackpackButton.MouseButton1Down:Connect(function()
-		ImprovedKeyPress({0xDF, 0xC0})
+		ImprovedKeyPress(0xDF, 0xC0)
 	end)
-
-	AttachHumanoidToHealthBar(Humanoid)
-
 	NameContainer.MouseButton1Down:Connect(function()
 		TogglePlayerlist()
 	end)
-
+	
+	AttachHumanoidToHealthBar(Humanoid)
+	
 	Player.CharacterAdded:Connect(function(character)
 		AttachHumanoidToHealthBar(character:WaitForChild("Humanoid"))
 	end)
