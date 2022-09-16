@@ -407,9 +407,11 @@ if RetrofiyConfig.RetroCoreGui then
 		end)
 
 		local SpecialPlayer = SpecialPlayers[player.UserId]
-
+		
 		if SpecialPlayer then
 			Icon.Image = "rbxassetid://" .. SpecialPlayer
+		elseif player:IsInGroup(1200769) then
+			Icon.Image = "rbxassetid://10926389485"
 		elseif player.MembershipType == Enum.MembershipType.Premium then
 			if RetrofiyConfig.BCOnly then
 				Icon.Image = "rbxassetid://" .. Memberships["33"]
