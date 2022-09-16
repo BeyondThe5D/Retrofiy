@@ -452,7 +452,28 @@ if RetrofiyConfig.RetroCoreGui then
 	CoreGui.RobloxGui.Backpack.Inventory.Changed:Connect(function()
 		BackpackButton.ImageLabel.Image = "rbxassetid://" .. BackpackTextures[CoreGui.RobloxGui.Backpack.Inventory.Visible]
 	end)
-
+	
+	local function ConvertScrollingFrame(scrollingframe)
+		scrollingframe.ScrollBarImageColor3 = Color3.fromRGB(56, 56, 56)
+		scrollingframe.ScrollBarImageTransparency = 0
+		scrollingframe.Changed:Connect(function()
+			scrollingframe.ScrollBarImageColor3 = Color3.fromRGB(56, 56, 56)
+			scrollingframe.ScrollBarImageTransparency = 0
+		end)
+	end
+	
+	for _, scrollingframes in pairs(game:GetDescendants()) do
+		if scrollingframes:IsA("ScrollingFrame") then
+			ConvertScrollingFrame(scrollingframes)
+		end
+	end
+	
+	workspace.DescendantAdded:Connect(function(scrollingframe)
+		if scrollingframe:IsA("ScrollingFrame") then
+			ConvertScrollingFrame(scrollingframe)
+		end
+	end)
+	
 	RunService.Heartbeat:Connect(function() --  This shit is the worst code here
 		if not StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList) then
 			CanTogglePlayerlist = false
@@ -485,7 +506,7 @@ if RetrofiyConfig.RetroWorkspace then
 		end
 
 		for i, x in pairs(Surface) do
-			if basepart:IsA("BasePart") and not basepart:FindFirstChildOfClass("MeshPart") and not basepart:FindFirstChildOfClass("SpecialMesh") and (script.Parent and not basepart.Parent:FindFirstChildOfClass("Humanoid")) and basepart.Material == Enum.Material.Plastic and basepart[x] == Enum.SurfaceType.Studs then
+			if basepart:IsA("BasePart") and basepart.Parent and not basepart:FindFirstChildOfClass("MeshPart") and not basepart:FindFirstChildOfClass("SpecialMesh") and not basepart.Parent:FindFirstChildOfClass("Humanoid") and basepart.Material == Enum.Material.Plastic and basepart[x] == Enum.SurfaceType.Studs then
 				local Studs = Instance.new("Texture")
 				Studs.Color3 = basepart.Color
 				Studs.Color3 = Color3.new(Studs.Color3.R * 2, Studs.Color3.G * 2, Studs.Color3.B * 2)
@@ -569,6 +590,18 @@ if RetrofiyConfig.RetroChat then
 			not ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar:IsFocused()
 			ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 32)
 			ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.Position = UDim2.new(0, 7, 0, 2)
+		end)
+		
+		local function UpdateBarThickness()
+			if ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller.ScrollBarThickness == 4 then
+				ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller.ScrollBarThickness = 7
+			end
+		end
+		
+		UpdateBarThickness()
+		
+		ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller:GetPropertyChangedSignal("ScrollBarThickness"):Connect(function(value)
+			UpdateBarThickness()
 		end)
 	end
 end
