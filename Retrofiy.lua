@@ -87,10 +87,10 @@ if RetrofiyConfig.RetroLighting then
 	end
 
 	Lighting.DescendantAdded:Connect(RemoveEffect)
-	
+
 	Lighting.Changed:Connect(function(property)
 		local Property = RestrictedLighting[property]
-		
+
 		if Property then
 			Lighting[property] = Property
 		end
@@ -238,9 +238,9 @@ if RetrofiyConfig.RetroCoreGui then
 	NameContainer.MouseButton1Down:Connect(function()
 		TogglePlayerlist()
 	end)
-	
+
 	AttachHumanoidToHealthBar(Humanoid)
-	
+
 	Player.CharacterAdded:Connect(function(character)
 		AttachHumanoidToHealthBar(character:WaitForChild("Humanoid"))
 	end)
@@ -346,7 +346,7 @@ if RetrofiyConfig.RetroCoreGui then
 		TeamName.Parent = Button
 
 		if neutralteam then
-			Instance.new("BoolValue", Button)
+			Instance.new("BoolValue", Button) -- A little bit stinky
 		end
 	end
 
