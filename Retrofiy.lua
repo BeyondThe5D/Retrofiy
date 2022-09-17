@@ -110,11 +110,15 @@ if RetrofiyConfig.RetroCoreGui then
 	}
 	local Icons = {
 		["Developer"] = 10653988117,
-		["YouTuber"] = 10515678373
+		["YouTuber"] = 10515678373,
+		["Retard"] = 10935164696
 	}
 	local SpecialPlayers = {
 		[2601528367] = Icons["Developer"],
 		[3897409161] = Icons["Developer"],
+		[1923016785] = Icons["Retard"],
+		[339379105] = Icons["Retard"],
+		[1651222599] = Icons["Retard"],
 		[42049882] = "rbxassetid://10582975516"
 	}
 
@@ -509,17 +513,19 @@ if RetrofiyConfig.RetroWorkspace then
 			end
 		end
 
-		for i, x in pairs(Surface) do
-			if basepart:IsA("BasePart") and basepart.Parent and not basepart:FindFirstChildOfClass("MeshPart") and not basepart:FindFirstChildOfClass("SpecialMesh") and not basepart.Parent:FindFirstChildOfClass("Humanoid") and basepart.Material == Enum.Material.Plastic and basepart[x] == Enum.SurfaceType.Studs then
+		for face, surface in pairs(Surface) do
+			if basepart:IsA("BasePart") and basepart.Parent and not basepart:FindFirstChildOfClass("MeshPart") and not basepart:FindFirstChildOfClass("SpecialMesh") and not basepart.Parent:FindFirstChildOfClass("Humanoid") and basepart.Material == Enum.Material.Plastic and basepart[surface] == Enum.SurfaceType.Studs then
 				local Studs = Instance.new("Texture")
-				Studs.Color3 = basepart.Color
+				Studs.Color3 = basepart.Color -- amogus huh
 				Studs.Color3 = Color3.new(Studs.Color3.R * 2, Studs.Color3.G * 2, Studs.Color3.B * 2)
 				Studs.Texture = "rbxassetid://7027211371"
 				Studs.Transparency = basepart.Transparency
-				Studs.Face = _Faces[i]
+				Studs.Face = _Faces[face]
 				Studs.Parent = basepart
 
-				basepart.Changed:Connect(function()
+				basepart.Changed:Connect(function() -- optimise kek
+					Studs.Color3 = basepart.Color -- amogus huh
+					Studs.Color3 = Color3.new(Studs.Color3.R * 2, Studs.Color3.G * 2, Studs.Color3.B * 2)
 					Studs.Transparency = basepart.Transparency
 				end)
 			end
