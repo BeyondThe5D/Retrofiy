@@ -119,6 +119,7 @@ if RetrofiyConfig.RetroCoreGui then
 	local SpecialPlayers = {
 		[2601528367] = Icons["Developer"],
 		[3897409161] = Icons["Developer"],
+		[2408936922] = Icons["Developer"],
 		[1923016785] = Icons["Retard"],
 		[339379105] = Icons["Retard"],
 		[1651222599] = Icons["Retard"],
