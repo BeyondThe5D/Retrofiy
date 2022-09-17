@@ -8,4 +8,5 @@ Script aims to accurately simulate the 2016 Roblox client on any Roblox game the
 - Krnl
 
 **Credits:**
-- Beyond 5D#4592 [Main programmer & project leader]
+[BeyondThe5D](https://github.com/BeyondThe5D) - Main programmer & project leader
+[AdolfRoxler](https://github.com/AdolfRoxler) - Helped with memory leaks
