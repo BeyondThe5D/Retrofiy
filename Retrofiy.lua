@@ -203,7 +203,7 @@ if RetrofiyConfig.RetroCoreGui then
 		return Button
 	end
 
-	local function AttachHumanoidToHealthBar(humanoid) -- 
+	local function AttachHumanoidToHealthBar(humanoid) -- broken
 		HealthFill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
 		humanoid.HealthChanged:Connect(function()
 			HealthFill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
@@ -578,7 +578,7 @@ if RetrofiyConfig.RetroCharacters then
 		if humanoid:IsA("Humanoid") and not table.find(Humanoids, humanoid) then
 			table.insert(Humanoids, humanoid)
 
-			humanoid:GetPropertyChangedSignal("Parent"):Connect(function()
+			humanoid.AncestryChanged:Connect(function()
 				if not humanoid:IsDescendantOf(workspace) then
 					table.remove(Humanoids, table.find(Humanoids, humanoid))
 				end
