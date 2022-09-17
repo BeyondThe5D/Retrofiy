@@ -414,18 +414,20 @@ if RetrofiyConfig.RetroCoreGui then
 		end)
 
 		local SpecialPlayer = SpecialPlayers[player.UserId]
-
-		if SpecialPlayer then
-			Icon.Image = "rbxassetid://" .. SpecialPlayer
-		elseif player:IsInGroup(1200769) then
-			Icon.Image = "rbxassetid://10926389485"
-		elseif player.MembershipType == Enum.MembershipType.Premium then
-			if RetrofiyConfig.BCOnly then
-				Icon.Image = "rbxassetid://" .. Memberships["33"]
-			else
-				Icon.Image = "rbxassetid://" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"]
+		
+		pcall(function() -- idk if there is a way to remove this (yet)
+			if SpecialPlayer then
+				Icon.Image = "rbxassetid://" .. SpecialPlayer
+			elseif player:IsInGroup(1200769) then -- causes issues
+				Icon.Image = "rbxassetid://10926389485"
+			elseif player.MembershipType == Enum.MembershipType.Premium then
+				if RetrofiyConfig.BCOnly then
+					Icon.Image = "rbxassetid://" .. Memberships["33"]
+				else
+					Icon.Image = "rbxassetid://" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"]
+				end
 			end
-		end
+		end)
 	end
 
 	for _, teams in pairs(Teams:GetChildren()) do
