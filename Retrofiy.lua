@@ -552,9 +552,7 @@ end
 
 if RetrofiyConfig.RetroCharacters then
 	local function ConvertCharacter(object)
-		if object:IsA("Humanoid") then
-			RunService.RenderStepped:Wait()
-
+		if object:IsA("Humanoid") and object.HealthDisplayType == Enum.HumanoidHealthDisplayType.DisplayWhenDamaged then
 			object.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
 		elseif object:IsA("Sound") and object.SoundId == "rbxasset://sounds/uuhhh.mp3" then
 			object:GetPropertyChangedSignal("Playing"):Connect(function()
