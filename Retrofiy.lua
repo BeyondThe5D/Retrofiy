@@ -33,6 +33,9 @@ if not game:IsLoaded() then
 	game.Loaded:Wait()
 end
 
+makefolder("Retrofiy")
+makefolder("Retrofiy\\Patches")
+
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
 local MaterialService = game:GetService("MaterialService")
@@ -414,7 +417,7 @@ if RetrofiyConfig.RetroCoreGui then
 		end)
 
 		local SpecialPlayer = SpecialPlayers[player.UserId]
-		
+
 		pcall(function() -- idk if there is a way to remove this (yet)
 			if SpecialPlayer then
 				Icon.Image = "rbxassetid://" .. SpecialPlayer
@@ -481,7 +484,7 @@ if RetrofiyConfig.RetroCoreGui then
 		end
 	end)
 
-	RunService.Heartbeat:Connect(function() --  This shit is the worst code here
+	RunService.RenderStepped:Connect(function() --  This shit is the worst code here
 		if not StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList) then
 			CanTogglePlayerlist = false
 			PlayerlistContainer.Visible = false
@@ -616,6 +619,12 @@ if RetrofiyConfig.RetroChat then
 			UpdateBarThickness()
 		end)
 	end
+end
+
+local Patch = "Retrofiy\\Patches\\" .. game.PlaceId..".lua"
+
+if isfile(Patch) then
+	loadstring(readfile(Patch))()
 end
 
 RunService:Set3dRenderingEnabled(true)
