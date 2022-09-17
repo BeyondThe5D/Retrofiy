@@ -556,10 +556,6 @@ if RetrofiyConfig.RetroCharacters then
 			RunService.RenderStepped:Wait()
 
 			object.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
-
-			object.Changed:Connect(function()
-				object.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
-			end)
 		elseif object:IsA("Sound") and object.SoundId == "rbxasset://sounds/uuhhh.mp3" then
 			object:GetPropertyChangedSignal("Playing"):Connect(function()
 				object:Stop()
