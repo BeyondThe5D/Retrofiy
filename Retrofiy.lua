@@ -571,6 +571,38 @@ if RetrofiyConfig.RetroCharacters then
 	end
 
 	workspace.DescendantAdded:Connect(ConvertCharacter)
+	
+	local Humanoids = {}
+	
+	local function AddHumanoidToTable(humanoid)
+		if humanoid:IsA("Humanoid") and not table.find(Humanoids, humanoid) then
+			table.insert(Humanoids, humanoid)
+
+			humanoid:GetPropertyChangedSignal("Parent"):Connect(function()
+				if not humanoid:IsDescendantOf(workspace) then
+					-- Remove humanoid from table!
+				end
+			end)
+		end
+	end
+
+	for _, humanoids in pairs(workspace:GetDescendants()) do
+		AddHumanoidToTable(humanoids)
+	end
+
+	workspace.DescendantAdded:Connect(function(humanoid)
+		AddHumanoidToTable(humanoid)
+	end)
+
+	spawn(function()
+		while true do
+			for _, humanoids in pairs(Humanoids) do -- Does not work if player has infinite health!
+				humanoids.MaxHealth -= 0.00001
+				RunService.RenderStepped:Wait()
+				humanoids.MaxHealth += 0.00001
+			end
+		end
+	end)
 end
 
 if RetrofiyConfig.RetroChat then
