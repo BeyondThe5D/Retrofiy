@@ -525,6 +525,7 @@ if RetrofiyConfig.RetroWorkspace then
 				Studs.Color3 = Color3.new(Studs.Color3.R * 2, Studs.Color3.G * 2, Studs.Color3.B * 2)
 				Studs.Texture = "rbxassetid://7027211371"
 				Studs.Transparency = basepart.Transparency
+				Studs.ZIndex = -2147483648
 				Studs.Face = _Faces[face]
 				Studs.Parent = basepart
 
