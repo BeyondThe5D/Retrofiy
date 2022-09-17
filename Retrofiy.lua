@@ -506,7 +506,7 @@ if RetrofiyConfig.RetroWorkspace then
 	local _Faces = {"Back", "Bottom", "Front", "Left", "Right", "Top"}
 
 	local function ConvertBasePart(basepart)
-		if basepart.Parent and Players:FindFirstChild(basepart.Parent.Name) then
+		if basepart.Parent and Players:FindFirstChild(basepart.Parent.Name) then -- Try remove
 			if StarterPlayer.LoadCharacterAppearance then
 				if not Players[basepart.Parent.Name]:HasAppearanceLoaded() then
 					Players[basepart.Parent.Name].CharacterAppearanceLoaded:Wait()
