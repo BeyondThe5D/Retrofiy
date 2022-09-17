@@ -621,7 +621,7 @@ if RetrofiyConfig.RetroChat then
 	end
 end
 
-local Patch = "Retrofiy\\Patches\\" .. game.PlaceId..".lua"
+local Patch = "Retrofiy\\Patches\\" .. game.PlaceId .. ".lua"
 
 if isfile(Patch) then
 	loadstring(readfile(Patch))()
