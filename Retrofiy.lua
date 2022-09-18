@@ -555,13 +555,13 @@ if RetrofiyConfig.RetroCharacters then
 	local Humanoids = {}
 	
 	local function ConvertCharacter(object)
-		if object:IsA("Humanoid") and not table.find(Humanoids, object) then
-			table.insert(Humanoids, object)
+		if object:IsA("Humanoid") then
 			if object.HealthDisplayType == Enum.HumanoidHealthDisplayType.DisplayWhenDamaged then
 				object.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
 			end
 			
-			if workspace.CurrentCamera.CameraSubject ~= object then
+			if workspace.CurrentCamera.CameraSubject ~= object and not table.find(Humanoids, object) then
+				table.insert(Humanoids, object)
 				object.AncestryChanged:Connect(function()
 					if not object:IsDescendantOf(workspace) then
 						table.remove(Humanoids, table.find(Humanoids, object))
