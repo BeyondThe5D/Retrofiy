@@ -5,7 +5,6 @@ Script aims to accurately simulate the late 2016 Roblox client on any Roblox gam
 **Confirmed working exploits:**
 - Synapse X
 - Script-Ware
-- Krnl
 
 **Credits:**
 
