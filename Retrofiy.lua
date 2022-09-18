@@ -552,9 +552,22 @@ if RetrofiyConfig.RetroWorkspace then
 end
 
 if RetrofiyConfig.RetroCharacters then
+	local Humanoids = {}
+	
 	local function ConvertCharacter(object)
-		if object:IsA("Humanoid") and object.HealthDisplayType == Enum.HumanoidHealthDisplayType.DisplayWhenDamaged then
-			object.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
+		if object:IsA("Humanoid") and not table.find(Humanoids, object) then
+			table.insert(Humanoids, object)
+			if object.HealthDisplayType == Enum.HumanoidHealthDisplayType.DisplayWhenDamaged then
+				object.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
+			end
+			
+			if workspace.CurrentCamera.CameraSubject ~= object then
+				object.AncestryChanged:Connect(function()
+					if not object:IsDescendantOf(workspace) then
+						table.remove(Humanoids, table.find(Humanoids, object))
+					end
+				end)
+			end
 		elseif object:IsA("Sound") and object.SoundId == "rbxasset://sounds/uuhhh.mp3" then
 			object:GetPropertyChangedSignal("Playing"):Connect(function()
 				object:Stop()
@@ -573,33 +586,13 @@ if RetrofiyConfig.RetroCharacters then
 
 	workspace.DescendantAdded:Connect(ConvertCharacter)
 
-	local Humanoids = {}
-
-	local function AddHumanoidToTable(humanoid)
-		if humanoid:IsA("Humanoid") and workspace.CurrentCamera.CameraSubject ~= humanoid and not table.find(Humanoids, humanoid) then
-			table.insert(Humanoids, humanoid)
-
-			humanoid.AncestryChanged:Connect(function()
-				if not humanoid:IsDescendantOf(workspace) then
-					table.remove(Humanoids, table.find(Humanoids, humanoid))
-				end
-			end)
-		end
-	end
-
-	for _, humanoids in pairs(workspace:GetDescendants()) do
-		AddHumanoidToTable(humanoids)
-	end
-
-	workspace.DescendantAdded:Connect(AddHumanoidToTable)
-
 	local PreviousCameraSubject = workspace.CurrentCamera.CameraSubject
 
 	workspace.CurrentCamera:GetPropertyChangedSignal("CameraSubject"):Connect(function()
 		if table.find(Humanoids, workspace.CurrentCamera.CameraSubject) then
 			table.remove(Humanoids, table.find(Humanoids, workspace.CurrentCamera.CameraSubject))
 		else
-			AddHumanoidToTable(PreviousCameraSubject)
+			ConvertCharacter(PreviousCameraSubject)
 		end
 		PreviousCameraSubject = workspace.CurrentCamera.CameraSubject
 	end)
