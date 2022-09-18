@@ -576,7 +576,7 @@ if RetrofiyConfig.RetroCharacters then
 	local Humanoids = {}
 
 	local function AddHumanoidToTable(humanoid)
-		if humanoid:IsA("Humanoid") and not table.find(Humanoids, humanoid) then
+		if humanoid:IsA("Humanoid") and workspace.CurrentCamera.CameraSubject ~= humanoid and not table.find(Humanoids, humanoid) then
 			table.insert(Humanoids, humanoid)
 
 			humanoid.AncestryChanged:Connect(function()
@@ -591,17 +591,27 @@ if RetrofiyConfig.RetroCharacters then
 		AddHumanoidToTable(humanoids)
 	end
 
-	workspace.DescendantAdded:Connect(function(humanoid)
-		AddHumanoidToTable(humanoid)
+	workspace.DescendantAdded:Connect(AddHumanoidToTable)
+
+	local PreviousCameraSubject = workspace.CurrentCamera.CameraSubject
+
+	workspace.CurrentCamera:GetPropertyChangedSignal("CameraSubject"):Connect(function()
+		if table.find(Humanoids, workspace.CurrentCamera.CameraSubject) then
+			table.remove(Humanoids, table.find(Humanoids, workspace.CurrentCamera.CameraSubject))
+		else
+			AddHumanoidToTable(PreviousCameraSubject)
+		end
+		PreviousCameraSubject = workspace.CurrentCamera.CameraSubject
 	end)
 
 	spawn(function()
 		while true do
 			for _, humanoids in pairs(Humanoids) do -- Does not work if player has infinite health!
-				humanoids.MaxHealth -= 0.00001
-				RunService.RenderStepped:Wait()
 				humanoids.MaxHealth += 0.00001
+				RunService.RenderStepped:Wait()
+				humanoids.MaxHealth -= 0.00001
 			end
+			RunService.RenderStepped:Wait()
 		end
 	end)
 end
