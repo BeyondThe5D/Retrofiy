@@ -23,10 +23,9 @@
 local RetrofiyConfig = {
 	RetroLighting = true, -- [R] -- Force disables lighting properties that weren't in 2016, uses compatibility Techology and deletes effects not seen in 2016
 	RetroCoreGui = true, -- [B] -- Replaces the Core Gui with a 2016 Core Gui (Playerlist, topbar, etc)
-	RetroWorkspace = true, -- [B] -- Uses old materials, disables terrain decoration, only allows brick colors and returns 2016 studs
+	RetroWorkspace = true, -- [R] -- Uses old materials, disables terrain decoration, only allows brick colors and returns 2016 studs
 	RetroCharacters = true, -- [B] -- Displays health bars above the heads of characters & returns old oof sound
 	RetroChat = true, -- [R] -- If default chat is enabled it will convert it to the 2016 chat
-	RetroCamera = true, -- [B] -- Uses the 2016 camera script which removes the tweening between switching camera position and can't clip through walls
 	BCOnly = false -- [O] -- Makes all premium players appear as BC players instead of it being User ID linked
 }
 
@@ -47,6 +46,8 @@ local Chat = game:GetService("Chat")
 local CoreGui = game:GetService("CoreGui")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
+local NetworkClient = game:GetService("NetworkClient")
+local GuiService = game:GetService("GuiService")
 
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
@@ -189,6 +190,17 @@ if RetrofiyConfig.RetroCoreGui then
 	UIListLayout.FillDirection = Enum.FillDirection.Horizontal
 	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	UIListLayout.Parent = IconsFolder
+	local KickMessage = Instance.new("TextLabel")
+	KickMessage.AnchorPoint = Vector2.new(0.5, 0)
+	KickMessage.BackgroundColor3 = Color3.fromRGB(253, 68, 72)
+	KickMessage.BorderSizePixel = 0
+	KickMessage.Position = UDim2.new(0.5, 0, 0, 0)
+	KickMessage.Size = UDim2.new(0.5, 0, 0, 80)
+	KickMessage.Visible = false
+	KickMessage.Font = Enum.Font.SourceSansBold
+	KickMessage.TextColor3 = Color3.fromRGB(255, 255, 255)
+	KickMessage.TextSize = 14
+	KickMessage.Parent = RetroGui
 
 	local function CreateIcon(size, image, hoverimage)
 		local Button = Instance.new("ImageButton")
@@ -420,19 +432,15 @@ if RetrofiyConfig.RetroCoreGui then
 
 		local SpecialPlayer = SpecialPlayers[player.UserId]
 
-		pcall(function() -- idk if there is a way to remove this (yet)
-			if SpecialPlayer then
-				Icon.Image = "rbxassetid://" .. SpecialPlayer
-			elseif player:IsInGroup(1200769) then -- causes issues
-				Icon.Image = "rbxassetid://10926389485"
-			elseif player.MembershipType == Enum.MembershipType.Premium then
-				if RetrofiyConfig.BCOnly then
-					Icon.Image = "rbxassetid://" .. Memberships["33"]
-				else
-					Icon.Image = "rbxassetid://" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"]
-				end
+		if SpecialPlayer then
+			Icon.Image = "rbxassetid://" .. SpecialPlayer
+		elseif player.MembershipType == Enum.MembershipType.Premium then
+			if RetrofiyConfig.BCOnly then
+				Icon.Image = "rbxassetid://" .. Memberships["33"]
+			else
+				Icon.Image = "rbxassetid://" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"]
 			end
-		end)
+		end
 	end
 
 	for _, teams in pairs(Teams:GetChildren()) do
@@ -485,8 +493,25 @@ if RetrofiyConfig.RetroCoreGui then
 			ConvertScrollingFrame(scrollingframe)
 		end
 	end)
-
-	RunService.RenderStepped:Connect(function() --  This shit is the worst code here
+	
+	NetworkClient.ChildRemoved:Connect(function(object)
+		if object:IsA("ClientReplicator") then
+			GuiService:ClearError()
+			
+			local ErrorPrompt = CoreGui.RobloxPromptGui.promptOverlay:WaitForChild("ErrorPrompt")
+			local KickPrompt = ErrorPrompt.MessageArea.ErrorFrame.ErrorMessage.Text
+			
+			if KickPrompt == "You were kicked from this experience: Player service requests player disconnect\n(Error Code: 267)" then
+				KickMessage.Text = "This game has shut down"
+			else
+				KickMessage.Text = KickPrompt:split("You were kicked from this experience: ")[2]:split("\n(Error Code: ")[1]
+			end
+			
+			KickMessage.Visible = true
+		end
+	end)
+	
+	RunService.RenderStepped:Connect(function()
 		if not StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList) then
 			CanTogglePlayerlist = false
 			PlayerlistContainer.Visible = false
@@ -658,10 +683,6 @@ if RetrofiyConfig.RetroChat then
 			UpdateBarThickness()
 		end)
 	end
-end
-
-if RetrofiyConfig.RetroCamera then
-
 end
 
 local Patch = "Retrofiy\\Patches\\" .. game.PlaceId .. ".lua"
