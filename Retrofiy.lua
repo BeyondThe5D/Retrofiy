@@ -35,7 +35,7 @@ end
 
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
-local MaterialService = game:GetServicea("MaterialService")
+local MaterialService = game:GetService("MaterialService")
 local StarterGui = game:GetService("StarterGui")
 local StarterPlayer = game:GetService("StarterPlayer")
 local Teams = game:GetService("Teams")
