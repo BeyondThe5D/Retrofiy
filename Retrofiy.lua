@@ -7,7 +7,7 @@
 	╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝░░╚═╝░╚════╝░╚═╝░░░░░╚═╝░░░╚═╝░░░
 	2016 client simulator
 	
-	Developed by Beyond 5D#4592
+	Developed by Beyond 5D#5878
 	https://discord.gg/FS2u5bfmKy
 --]]
 
