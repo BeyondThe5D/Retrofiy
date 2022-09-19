@@ -26,7 +26,7 @@ local RetrofiyConfig = {
 	RetroWorkspace = true, -- [B] -- Uses old materials, disables terrain decoration, only allows brick colors and returns 2016 studs
 	RetroCharacters = true, -- [B] -- Displays health bars above the heads of characters & returns old oof sound
 	RetroChat = true, -- [R] -- If default chat is enabled it will convert it to the 2016 chat
-	RetroCamera = true, -- [R] -- Uses the 2016 camera script which removes the tweening between switching camera position and can't clip through walls
+	RetroCamera = true, -- [B] -- Uses the 2016 camera script which removes the tweening between switching camera position and can't clip through walls
 	BCOnly = false -- [O] -- Makes all premium players appear as BC players instead of it being User ID linked
 }
 
@@ -530,12 +530,12 @@ if RetrofiyConfig.RetroWorkspace then
 				Studs.ZIndex = -2147483648
 				Studs.Face = _Faces[face]
 				Studs.Parent = basepart
-				
+
 				basepart:GetPropertyChangedSignal("Color"):Connect(function()
 					Studs.Color3 = basepart.Color -- omg lua
 					Studs.Color3 = Color3.new(Studs.Color3.R * 2, Studs.Color3.G * 2, Studs.Color3.B * 2)
 				end)
-				
+
 				basepart:GetPropertyChangedSignal("Transparency"):Connect(function()
 					Studs.Transparency = basepart.Transparency
 				end)
@@ -552,7 +552,7 @@ if RetrofiyConfig.RetroWorkspace then
 	end)
 
 	sethiddenproperty(workspace:FindFirstChildOfClass("Terrain"), "Decoration", false)
-	
+
 	MaterialService.Use2022Materials = false
 	MaterialService:GetPropertyChangedSignal("Use2022Materials"):Connect(function()
 		MaterialService.Use2022Materials = false
