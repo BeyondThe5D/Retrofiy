@@ -25,7 +25,8 @@ local RetrofiyConfig = {
 	RetroCoreGui = true, -- [B] -- Replaces the Core Gui with a 2016 Core Gui (Playerlist, topbar, etc)
 	RetroWorkspace = true, -- [B] -- Uses old materials, disables terrain decoration, only allows brick colors and returns 2016 studs
 	RetroCharacters = true, -- [B] -- Displays health bars above the heads of characters & returns old oof sound
-	RetroChat = true, -- [B] -- If default chat is enabled it will convert it to the 2016 chat
+	RetroChat = true, -- [R] -- If default chat is enabled it will convert it to the 2016 chat
+	RetroCamera = true, -- [R] -- Uses the 2016 camera script which removes the tweening between switching camera position and can't clip through walls
 	BCOnly = false -- [O] -- Makes all premium players appear as BC players instead of it being User ID linked
 }
 
@@ -515,24 +516,27 @@ if RetrofiyConfig.RetroWorkspace then
 			end
 
 			if basepart.Parent then
-				basepart.Parent:WaitForChild("Humanoid", 1)
+				basepart.Parent:WaitForChild("Humanoid", 2)
 			end
 		end
 
 		for face, surface in pairs(Surface) do
-			if basepart:IsA("BasePart") and basepart.Parent and not basepart:FindFirstChildOfClass("MeshPart") and not basepart:FindFirstChildOfClass("SpecialMesh") and not basepart.Parent:FindFirstChildOfClass("Humanoid") and basepart.Material == Enum.Material.Plastic and basepart[surface] == Enum.SurfaceType.Studs then
+			if basepart:IsA("BasePart") and not basepart:IsA("UnionOperation") and basepart.Parent and not basepart:FindFirstChildOfClass("MeshPart") and not basepart:FindFirstChildOfClass("SpecialMesh") and not basepart.Parent:FindFirstChildOfClass("Humanoid") and basepart.Material == Enum.Material.Plastic and basepart[surface] == Enum.SurfaceType.Studs then
 				local Studs = Instance.new("Texture")
-				Studs.Color3 = basepart.Color -- amogus huh
+				Studs.Color3 = basepart.Color -- omg lua
 				Studs.Color3 = Color3.new(Studs.Color3.R * 2, Studs.Color3.G * 2, Studs.Color3.B * 2)
 				Studs.Texture = "rbxassetid://7027211371"
 				Studs.Transparency = basepart.Transparency
 				Studs.ZIndex = -2147483648
 				Studs.Face = _Faces[face]
 				Studs.Parent = basepart
-
-				basepart.Changed:Connect(function() -- optimise kek
-					Studs.Color3 = basepart.Color -- amogus huh
+				
+				basepart:GetPropertyChangedSignal("Color"):Connect(function()
+					Studs.Color3 = basepart.Color -- omg lua
 					Studs.Color3 = Color3.new(Studs.Color3.R * 2, Studs.Color3.G * 2, Studs.Color3.B * 2)
+				end)
+				
+				basepart:GetPropertyChangedSignal("Transparency"):Connect(function()
 					Studs.Transparency = basepart.Transparency
 				end)
 			end
@@ -548,18 +552,22 @@ if RetrofiyConfig.RetroWorkspace then
 	end)
 
 	sethiddenproperty(workspace:FindFirstChildOfClass("Terrain"), "Decoration", false)
+	
 	MaterialService.Use2022Materials = false
+	MaterialService:GetPropertyChangedSignal("Use2022Materials"):Connect(function()
+		MaterialService.Use2022Materials = false
+	end)
 end
 
 if RetrofiyConfig.RetroCharacters then
 	local Humanoids = {}
-	
+
 	local function ConvertCharacter(object)
 		if object:IsA("Humanoid") then
 			if object.HealthDisplayType == Enum.HumanoidHealthDisplayType.DisplayWhenDamaged then
 				object.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
 			end
-			
+
 			if workspace.CurrentCamera.CameraSubject ~= object and not table.find(Humanoids, object) then
 				table.insert(Humanoids, object)
 				object.AncestryChanged:Connect(function()
@@ -650,6 +658,10 @@ if RetrofiyConfig.RetroChat then
 			UpdateBarThickness()
 		end)
 	end
+end
+
+if RetrofiyConfig.RetroCamera then
+
 end
 
 local Patch = "Retrofiy\\Patches\\" .. game.PlaceId .. ".lua"
