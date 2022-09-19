@@ -33,12 +33,9 @@ if not game:IsLoaded() then
 	game.Loaded:Wait()
 end
 
-makefolder("Retrofiy")
-makefolder("Retrofiy\\Patches")
-
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
-local MaterialService = game:GetService("MaterialService")
+local MaterialService = game:GetServicea("MaterialService")
 local StarterGui = game:GetService("StarterGui")
 local StarterPlayer = game:GetService("StarterPlayer")
 local Teams = game:GetService("Teams")
@@ -56,6 +53,8 @@ local Humanoid = Character:WaitForChild("Humanoid")
 
 local MaxInteger = 2147483647
 
+local AssetFunction = getsynasset or getcustomasset
+
 local function ImprovedKeyPress(keys)
 	for _, key in pairs(keys) do
 		keypress(key)
@@ -63,7 +62,47 @@ local function ImprovedKeyPress(keys)
 	end
 end
 
+local function GetAsset(asset)
+	return AssetFunction("Retrofiy/" .. asset)
+end
+
+-- Could attempt to improve this guide!
+local Contents = {
+	["Retrofiy\\Assets\\Textures\\Backpack.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/Backpack.png",
+	["Retrofiy\\Assets\\Textures\\Backpack_Down.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/Backpack_Down.png",
+	["Retrofiy\\Assets\\Textures\\Chat.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/Chat.png",
+	["Retrofiy\\Assets\\Textures\\ChatDown.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/ChatDown.png",
+	["Retrofiy\\Assets\\Textures\\Hamburger.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/Hamburger.png",
+	["Retrofiy\\Assets\\Textures\\HamburgerDown.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/HamburgerDown.png",
+	["Retrofiy\\Assets\\Textures\\Studs.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/Studs.png",
+	["Retrofiy\\Assets\\Textures\\icon_BC-16.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/icon_BC-16.png",
+	["Retrofiy\\Assets\\Textures\\icon_TBC-16.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/icon_TBC-16.png",
+	["Retrofiy\\Assets\\Textures\\icon_OBC-16.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/icon_OBC-16.png",
+	["Retrofiy\\Assets\\Textures\\icon_DEV-16.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/icon_DEV-16.png",
+	["Retrofiy\\Assets\\Textures\\icon_EDGY-16.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/icon_EDGY-16.png",
+	["Retrofiy\\Assets\\Sounds\\uuhhh.mp3"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Sounds/uuhhh.mp3"
+}
+
 RunService:Set3dRenderingEnabled(false)
+
+local Folders = {
+	"Retrofiy\\Assets",
+	"Retrofiy\\Assets\\Textures",
+	"Retrofiy\\Assets\\Sounds",
+	"Retrofiy\\Patches"
+}
+
+for _, folders in pairs(Folders) do
+	if not isfolder(folders) then
+		makefolder(folders)
+	end
+end
+
+for folder, contents in pairs(Contents) do
+	if not isfile(folder) then
+		writefile(folder, game:HttpGet(contents))
+	end
+end
 
 if RetrofiyConfig.RetroLighting then
 	local RestrictedLighting = {
@@ -109,23 +148,14 @@ if RetrofiyConfig.RetroCoreGui then
 	RetroGui.Parent = CoreGui
 
 	local Memberships = {
-		["33"] = "10475940965",
-		["67"] = "10475942003",
-		["0"] = "10475943080"
-	}
-	local Icons = {
-		["Developer"] = 10653988117,
-		["YouTuber"] = 10515678373,
-		["Retard"] = 10935164696
+		["33"] = "icon_BC-16.png",
+		["67"] = "icon_TBC-16.png",
+		["0"] = "icon_OBC-16.png"
 	}
 	local SpecialPlayers = {
-		[2601528367] = Icons["Developer"],
-		[3897409161] = Icons["Developer"],
-		[2408936922] = Icons["Developer"],
-		[1923016785] = Icons["Retard"],
-		[339379105] = Icons["Retard"],
-		[1651222599] = Icons["Retard"],
-		[42049882] = "rbxassetid://10582975516"
+		[2601528367] = "icon_DEV-16.png",
+		[3897409161] = "icon_DEV-16.png",
+		[2408936922] = "icon_EDGY-16.png"
 	}
 
 	local CanTogglePlayerlist = true
@@ -202,7 +232,7 @@ if RetrofiyConfig.RetroCoreGui then
 	KickMessage.TextSize = 14
 	KickMessage.Parent = RetroGui
 
-	local function CreateIcon(size, image, hoverimage)
+	local function CreateIcon(size, image)
 		local Button = Instance.new("ImageButton")
 		Button.BackgroundTransparency = 1
 		Button.Size = UDim2.new(0, 50, 0, 36)
@@ -212,12 +242,12 @@ if RetrofiyConfig.RetroCoreGui then
 		Image.BackgroundTransparency = 1
 		Image.Position = UDim2.new(0.5, 0, 0.5, 0)
 		Image.Size = size
-		Image.Image = "rbxassetid://" .. image
+		Image.Image = GetAsset("Assets/Textures/" .. image)
 		Image.Parent = Button
 		return Button
 	end
 
-	local function AttachHumanoidToHealthBar(humanoid) -- broken
+	local function AttachHumanoidToHealthBar(humanoid)
 		HealthFill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
 		humanoid.HealthChanged:Connect(function()
 			HealthFill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
@@ -234,12 +264,12 @@ if RetrofiyConfig.RetroCoreGui then
 	end
 
 	local ChatTextures = {
-		[true] = 10588179517,
-		[false] = 10488448895
+		[true] = "ChatDown.png",
+		[false] = "Chat.png"
 	}
 	local BackpackTextures = {
-		[true] = 10490800273,
-		[false] = 10488415707
+		[true] = "Backpack_Down.png",
+		[false] = "Backpack.png"
 	}
 
 	local CoreChatBools = {
@@ -247,7 +277,7 @@ if RetrofiyConfig.RetroCoreGui then
 		["rbxasset://textures/ui/TopBar/chatOff.png"] = ChatTextures[false]
 	}
 
-	local SettingsButton = CreateIcon(UDim2.new(0, 32, 0, 25), 10488455495, 0)
+	local SettingsButton = CreateIcon(UDim2.new(0, 32, 0, 25), "Hamburger.png", 0)
 	local ChatButton = CreateIcon(UDim2.new(0, 28, 0, 27), CoreChatBools[CoreGui.ThemeProvider.TopBarFrame.LeftFrame.ChatIcon.Background.Icon.Image], 0)
 	local BackpackButton = CreateIcon(UDim2.new(0, 22, 0, 28), BackpackTextures[CoreGui.RobloxGui.Backpack.Inventory.Visible], 0)
 
@@ -274,49 +304,6 @@ if RetrofiyConfig.RetroCoreGui then
 			TogglePlayerlist()
 		end
 	end)
-
-	--[[
-	local FakeMouse = Instance.new("ImageLabel")
-	FakeMouse.AnchorPoint = Vector2.new(0.5, 0.5)
-	FakeMouse.BackgroundTransparency = 1
-	FakeMouse.Size = UDim2.new(0, 64, 0, 64)
-	FakeMouse.Image = "rbxassetid://10575892276"
-	FakeMouse.Parent = RetroGui
-	
-	local function DetectMouseHover(gui)
-		if gui.ClassName:lower():find("button") then
-			gui.MouseEnter:Connect(function()
-				FakeMouse.Image = "rbxassetid://10582925132"
-			end)
-
-			gui.MouseLeave:Connect(function()
-				FakeMouse.Image = "rbxassetid://10575892276"
-			end)
-		end
-	end
-	
-	for _, objects in pairs(CoreGui:GetDescendants()) do
-		DetectMouseHover(objects)
-	end
-	
-	CoreGui.DescendantAdded:Connect(function(object)
-		DetectMouseHover(object)
-	end)
-	
-	for _, objects in pairs(Player.PlayerGui:GetDescendants()) do
-		DetectMouseHover(objects)
-	end
-	
-	Player.PlayerGui.DescendantAdded:Connect(function(object)
-		DetectMouseHover(object)
-	end)
-	
-	UserInputService.MouseIconEnabled = false
-	
-	Mouse.Move:Connect(function()
-		FakeMouse.Position = UDim2.new(0, Mouse.X, 0, Mouse.Y)
-	end)
-	--]]
 
 	local TeamsOrderd = {}
 	local NeutralTeamExists = false
@@ -433,12 +420,12 @@ if RetrofiyConfig.RetroCoreGui then
 		local SpecialPlayer = SpecialPlayers[player.UserId]
 
 		if SpecialPlayer then
-			Icon.Image = "rbxassetid://" .. SpecialPlayer
+			Icon.Image = GetAsset("Assets/Textures/" .. SpecialPlayer)
 		elseif player.MembershipType == Enum.MembershipType.Premium then
 			if RetrofiyConfig.BCOnly then
-				Icon.Image = "rbxassetid://" .. Memberships["33"]
+				Icon.Image = GetAsset("Assets/Textures/" .. Memberships["33"])
 			else
-				Icon.Image = "rbxassetid://" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"]
+				Icon.Image = GetAsset("Assets/Textures/" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"])
 			end
 		end
 	end
@@ -465,12 +452,12 @@ if RetrofiyConfig.RetroCoreGui then
 
 	if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then
 		Player.PlayerGui.Chat.Frame.Changed:Connect(function()
-			ChatButton.ImageLabel.Image = "rbxassetid://" .. ChatTextures[Player.PlayerGui.Chat.Frame.Visible]
+			ChatButton.ImageLabel.Image = GetAsset("Assets/Textures/" .. ChatTextures[Player.PlayerGui.Chat.Frame.Visible])
 		end)
 	end
 
 	CoreGui.RobloxGui.Backpack.Inventory.Changed:Connect(function()
-		BackpackButton.ImageLabel.Image = "rbxassetid://" .. BackpackTextures[CoreGui.RobloxGui.Backpack.Inventory.Visible]
+		BackpackButton.ImageLabel.Image = GetAsset("Assets/Textures/" .. BackpackTextures[CoreGui.RobloxGui.Backpack.Inventory.Visible])
 	end)
 
 	local function ConvertScrollingFrame(scrollingframe)
@@ -493,24 +480,24 @@ if RetrofiyConfig.RetroCoreGui then
 			ConvertScrollingFrame(scrollingframe)
 		end
 	end)
-	
+
 	NetworkClient.ChildRemoved:Connect(function(object)
 		if object:IsA("ClientReplicator") then
 			GuiService:ClearError()
-			
+
 			local ErrorPrompt = CoreGui.RobloxPromptGui.promptOverlay:WaitForChild("ErrorPrompt")
 			local KickPrompt = ErrorPrompt.MessageArea.ErrorFrame.ErrorMessage.Text
-			
+
 			if KickPrompt == "You were kicked from this experience: Player service requests player disconnect\n(Error Code: 267)" then
 				KickMessage.Text = "This game has shut down"
 			else
 				KickMessage.Text = KickPrompt:split("You were kicked from this experience: ")[2]:split("\n(Error Code: ")[1]
 			end
-			
+
 			KickMessage.Visible = true
 		end
 	end)
-	
+
 	RunService.RenderStepped:Connect(function()
 		if not StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList) then
 			CanTogglePlayerlist = false
@@ -550,7 +537,7 @@ if RetrofiyConfig.RetroWorkspace then
 				local Studs = Instance.new("Texture")
 				Studs.Color3 = basepart.Color -- omg lua
 				Studs.Color3 = Color3.new(Studs.Color3.R * 2, Studs.Color3.G * 2, Studs.Color3.B * 2)
-				Studs.Texture = "rbxassetid://7027211371"
+				Studs.Texture = GetAsset("Assets/Textures/Studs.png")
 				Studs.Transparency = basepart.Transparency
 				Studs.ZIndex = -2147483648
 				Studs.Face = _Faces[face]
@@ -602,11 +589,10 @@ if RetrofiyConfig.RetroCharacters then
 				end)
 			end
 		elseif object:IsA("Sound") and object.SoundId == "rbxasset://sounds/uuhhh.mp3" then
-			object:GetPropertyChangedSignal("Playing"):Connect(function()
+			object:GetPropertyChangedSignal("Playing"):Connect(function() -- improve maybe?
 				object:Stop()
 				local ClientAudio = Instance.new("Sound")
-				ClientAudio.SoundId = "rbxassetid://5143383166"
-				ClientAudio.TimePosition = 0.5
+				ClientAudio.SoundId = GetAsset("Assets/Sounds/uuhhh.mp3")
 				ClientAudio.Parent = object.Parent
 				ClientAudio:Play()
 			end)
