@@ -9,6 +9,11 @@ The end goal for Retrofiy is to be achieve high accuracy, high compatibility and
 - Synapse X
 - Script-Ware
 
+# Script
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy.lua"))()
+```
+
 # Credits
 - [BeyondThe5D](https://github.com/BeyondThe5D) - Main programmer & project leader.
 - [AdolfRoxler](https://github.com/AdolfRoxler) - Helped with memory leaks.
