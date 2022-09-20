@@ -14,4 +14,5 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/
 # Credits
 - [BeyondThe5D](https://github.com/BeyondThe5D) - Main programmer & project leader.
 - [AdolfRoxler](https://github.com/AdolfRoxler) - Helped with memory leaks.
+- - [Greenman](https://github.com/greenmancode) - Writing the auto-downloader for the assets.
 - [Economy Simulator](https://economy-simulator.com) - Online 2016 client revival. (Used for features that couldn't be tested on an offline client.)
