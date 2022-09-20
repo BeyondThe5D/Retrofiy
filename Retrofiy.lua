@@ -568,10 +568,8 @@ if RetrofiyConfig.RetroCharacters then
 		elseif object:IsA("Sound") and object.SoundId == "rbxasset://sounds/uuhhh.mp3" then
 			object:GetPropertyChangedSignal("Playing"):Connect(function() -- improve maybe?
 				object:Stop()
-				local ClientAudio = Instance.new("Sound")
-				ClientAudio.SoundId = GetAsset("Retrofiy/Assets/Sounds/uuhhh.mp3")
-				ClientAudio.Parent = object.Parent
-				ClientAudio:Play()
+				object.SoundId = GetAsset("Retrofiy/Assets/Sounds/uuhhh.mp3")
+				object:Play()
 			end)
 		end
 	end
