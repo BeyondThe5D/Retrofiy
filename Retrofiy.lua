@@ -45,6 +45,7 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local NetworkClient = game:GetService("NetworkClient")
 local GuiService = game:GetService("GuiService")
+local HttpService = game:GetService("HttpService")
 
 RunService:Set3dRenderingEnabled(false)
 
@@ -64,39 +65,26 @@ local function ImprovedKeyPress(keys)
 	end
 end
 
--- Could attempt to improve this and make it find everything automatically!
-local Contents = {
-	["Retrofiy\\Assets\\Textures\\Backpack.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/Backpack.png",
-	["Retrofiy\\Assets\\Textures\\Backpack_Down.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/Backpack_Down.png",
-	["Retrofiy\\Assets\\Textures\\Chat.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/Chat.png",
-	["Retrofiy\\Assets\\Textures\\ChatDown.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/ChatDown.png",
-	["Retrofiy\\Assets\\Textures\\Hamburger.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/Hamburger.png",
-	["Retrofiy\\Assets\\Textures\\HamburgerDown.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/HamburgerDown.png",
-	["Retrofiy\\Assets\\Textures\\Studs.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/Studs.png",
-	["Retrofiy\\Assets\\Textures\\icon_BC-16.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/icon_BC-16.png",
-	["Retrofiy\\Assets\\Textures\\icon_TBC-16.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/icon_TBC-16.png",
-	["Retrofiy\\Assets\\Textures\\icon_OBC-16.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/icon_OBC-16.png",
-	["Retrofiy\\Assets\\Textures\\icon_DEV-16.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/icon_DEV-16.png",
-	["Retrofiy\\Assets\\Sounds\\uuhhh.mp3"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Sounds/uuhhh.mp3"
-}
-local Folders = {
-	"Retrofiy\\Assets",
-	"Retrofiy\\Assets\\Textures",
-	"Retrofiy\\Assets\\Sounds",
-	"Retrofiy\\Patches"
-}
+local function Connect(...)
+	return table.concat({...}, "/")
+end
 
-for _, folders in pairs(Folders) do
-	if not isfolder(folders) then
-		makefolder(folders)
+local function DownloadFiles(directory)
+	for _, item in pairs(HttpService:JSONDecode(game:HttpGet(Connect("https://api.github.com/repos/BeyondThe5D/Retrofiy/contents", directory)))) do
+		local newPath = Connect(directory, item["name"])
+		
+		if item["type"] == "dir" then
+			makefolder(newPath)
+			DownloadFiles(newPath)
+		elseif item["type"] == "file" then
+			writefile(newPath, game:HttpGet(item["download_url"]))
+		end
 	end
 end
 
-for folder, contents in pairs(Contents) do
-	if not isfile(folder) then
-		writefile(folder, game:HttpGet(contents))
-	end
-end
+makefolder("Retrofiy")
+makefolder("Retrofiy\\Patches")
+DownloadFiles("Retrofiy") 
 
 if RetrofiyConfig.RetroLighting then
 	local RestrictedLighting = {
