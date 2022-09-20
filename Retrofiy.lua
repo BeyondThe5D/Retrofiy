@@ -46,6 +46,8 @@ local UserInputService = game:GetService("UserInputService")
 local NetworkClient = game:GetService("NetworkClient")
 local GuiService = game:GetService("GuiService")
 
+RunService:Set3dRenderingEnabled(false)
+
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
 local Character = Player.Character or Player.CharacterAdded:Wait()
@@ -77,9 +79,6 @@ local Contents = {
 	["Retrofiy\\Assets\\Textures\\icon_DEV-16.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/icon_DEV-16.png",
 	["Retrofiy\\Assets\\Sounds\\uuhhh.mp3"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Sounds/uuhhh.mp3"
 }
-
-RunService:Set3dRenderingEnabled(false)
-
 local Folders = {
 	"Retrofiy\\Assets",
 	"Retrofiy\\Assets\\Textures",
