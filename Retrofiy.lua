@@ -566,7 +566,7 @@ if RetrofiyConfig.RetroCharacters then
 				table.insert(Humanoids, object)
 			end
 		elseif object:IsA("Sound") and object.SoundId == "rbxasset://sounds/uuhhh.mp3" then
-			object:GetPropertyChangedSignal("Playing"):Connect(function() -- improve maybe?
+			object:GetPropertyChangedSignal("Playing"):Connect(function()
 				object:Stop()
 				object.SoundId = GetAsset("Retrofiy/Assets/Sounds/uuhhh.mp3")
 				object:Play()
