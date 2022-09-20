@@ -53,7 +53,7 @@ local Humanoid = Character:WaitForChild("Humanoid")
 
 local MaxInteger = 2147483647
 
-local AssetFunction = getsynasset or getcustomasset
+local GetAsset = getsynasset or getcustomasset
 
 local function ImprovedKeyPress(keys)
 	for _, key in pairs(keys) do
@@ -62,11 +62,7 @@ local function ImprovedKeyPress(keys)
 	end
 end
 
-local function GetAsset(asset)
-	return AssetFunction("Retrofiy/" .. asset)
-end
-
--- Could attempt to improve this guide!
+-- Could attempt to improve this and make it find everything automatically!
 local Contents = {
 	["Retrofiy\\Assets\\Textures\\Backpack.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/Backpack.png",
 	["Retrofiy\\Assets\\Textures\\Backpack_Down.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/Backpack_Down.png",
@@ -79,7 +75,6 @@ local Contents = {
 	["Retrofiy\\Assets\\Textures\\icon_TBC-16.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/icon_TBC-16.png",
 	["Retrofiy\\Assets\\Textures\\icon_OBC-16.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/icon_OBC-16.png",
 	["Retrofiy\\Assets\\Textures\\icon_DEV-16.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/icon_DEV-16.png",
-	["Retrofiy\\Assets\\Textures\\icon_EDGY-16.png"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Textures/icon_EDGY-16.png",
 	["Retrofiy\\Assets\\Sounds\\uuhhh.mp3"] = "https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy/Assets/Sounds/uuhhh.mp3"
 }
 
@@ -155,7 +150,7 @@ if RetrofiyConfig.RetroCoreGui then
 	local SpecialPlayers = {
 		[2601528367] = "icon_DEV-16.png",
 		[3897409161] = "icon_DEV-16.png",
-		[2408936922] = "icon_EDGY-16.png"
+		[2408936922] = "icon_DEV-16.png"
 	}
 
 	local CanTogglePlayerlist = true
@@ -242,7 +237,7 @@ if RetrofiyConfig.RetroCoreGui then
 		Image.BackgroundTransparency = 1
 		Image.Position = UDim2.new(0.5, 0, 0.5, 0)
 		Image.Size = size
-		Image.Image = GetAsset("Assets/Textures/" .. image)
+		Image.Image = GetAsset("Retrofiy/Assets/Textures/" .. image)
 		Image.Parent = Button
 		return Button
 	end
@@ -420,12 +415,12 @@ if RetrofiyConfig.RetroCoreGui then
 		local SpecialPlayer = SpecialPlayers[player.UserId]
 
 		if SpecialPlayer then
-			Icon.Image = GetAsset("Assets/Textures/" .. SpecialPlayer)
+			Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. SpecialPlayer)
 		elseif player.MembershipType == Enum.MembershipType.Premium then
 			if RetrofiyConfig.BCOnly then
-				Icon.Image = GetAsset("Assets/Textures/" .. Memberships["33"])
+				Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. Memberships["33"])
 			else
-				Icon.Image = GetAsset("Assets/Textures/" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"])
+				Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"])
 			end
 		end
 	end
@@ -452,12 +447,12 @@ if RetrofiyConfig.RetroCoreGui then
 
 	if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then
 		Player.PlayerGui.Chat.Frame.Changed:Connect(function()
-			ChatButton.ImageLabel.Image = GetAsset("Assets/Textures/" .. ChatTextures[Player.PlayerGui.Chat.Frame.Visible])
+			ChatButton.ImageLabel.Image = GetAsset("Retrofiy/Assets/Textures/" .. ChatTextures[Player.PlayerGui.Chat.Frame.Visible])
 		end)
 	end
 
 	CoreGui.RobloxGui.Backpack.Inventory.Changed:Connect(function()
-		BackpackButton.ImageLabel.Image = GetAsset("Assets/Textures/" .. BackpackTextures[CoreGui.RobloxGui.Backpack.Inventory.Visible])
+		BackpackButton.ImageLabel.Image = GetAsset("Retrofiy/Assets/Textures/" .. BackpackTextures[CoreGui.RobloxGui.Backpack.Inventory.Visible])
 	end)
 
 	local function ConvertScrollingFrame(scrollingframe)
@@ -537,7 +532,7 @@ if RetrofiyConfig.RetroWorkspace then
 				local Studs = Instance.new("Texture")
 				Studs.Color3 = basepart.Color -- omg lua
 				Studs.Color3 = Color3.new(Studs.Color3.R * 2, Studs.Color3.G * 2, Studs.Color3.B * 2)
-				Studs.Texture = GetAsset("Assets/Textures/Studs.png")
+				Studs.Texture = GetAsset("Retrofiy/Assets/Textures/Studs.png")
 				Studs.Transparency = basepart.Transparency
 				Studs.ZIndex = -2147483648
 				Studs.Face = _Faces[face]
@@ -592,7 +587,7 @@ if RetrofiyConfig.RetroCharacters then
 			object:GetPropertyChangedSignal("Playing"):Connect(function() -- improve maybe?
 				object:Stop()
 				local ClientAudio = Instance.new("Sound")
-				ClientAudio.SoundId = GetAsset("Assets/Sounds/uuhhh.mp3")
+				ClientAudio.SoundId = GetAsset("Retrofiy/Assets/Sounds/uuhhh.mp3")
 				ClientAudio.Parent = object.Parent
 				ClientAudio:Play()
 			end)
