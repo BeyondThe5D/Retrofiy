@@ -564,11 +564,6 @@ if RetrofiyConfig.RetroCharacters then
 
 			if workspace.CurrentCamera.CameraSubject ~= object and not table.find(Humanoids, object) then
 				table.insert(Humanoids, object)
-				object.AncestryChanged:Connect(function()
-					if not object:IsDescendantOf(workspace) then
-						table.remove(Humanoids, table.find(Humanoids, object))
-					end
-				end)
 			end
 		elseif object:IsA("Sound") and object.SoundId == "rbxasset://sounds/uuhhh.mp3" then
 			object:GetPropertyChangedSignal("Playing"):Connect(function() -- improve maybe?
@@ -586,7 +581,13 @@ if RetrofiyConfig.RetroCharacters then
 	end
 
 	workspace.DescendantAdded:Connect(ConvertCharacter)
-
+	
+	workspace.DescendantRemoving:Connect(function(object)
+		if table.find(Humanoids, object) then
+			table.remove(Humanoids, table.find(Humanoids, object))
+		end
+	end)
+	
 	local PreviousCameraSubject = workspace.CurrentCamera.CameraSubject
 
 	workspace.CurrentCamera:GetPropertyChangedSignal("CameraSubject"):Connect(function()
