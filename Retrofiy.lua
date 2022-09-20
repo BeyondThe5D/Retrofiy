@@ -71,13 +71,13 @@ end
 
 local function DownloadFiles(directory)
 	for _, item in pairs(HttpService:JSONDecode(game:HttpGet(Connect("https://api.github.com/repos/BeyondThe5D/Retrofiy/contents", directory)))) do
-		local newPath = Connect(directory, item["name"])
-		
-		if item["type"] == "dir" then
-			makefolder(newPath)
-			DownloadFiles(newPath)
-		elseif item["type"] == "file" then
-			writefile(newPath, game:HttpGet(item["download_url"]))
+		local NewPath = Connect(directory, item["name"])
+
+		if item["type"] == "dir" and not isfolder(NewPath) then
+			makefolder(NewPath)
+			DownloadFiles(NewPath)
+		elseif item["type"] == "file" and not isfile(NewPath) then
+			writefile(NewPath, game:HttpGet(item["download_url"]))
 		end
 	end
 end
