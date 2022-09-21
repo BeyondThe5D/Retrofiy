@@ -579,13 +579,13 @@ if RetrofiyConfig.RetroCharacters then
 	end
 
 	workspace.DescendantAdded:Connect(ConvertCharacter)
-	
+
 	workspace.DescendantRemoving:Connect(function(object)
 		if table.find(Humanoids, object) then
 			table.remove(Humanoids, table.find(Humanoids, object))
 		end
 	end)
-	
+
 	local PreviousCameraSubject = workspace.CurrentCamera.CameraSubject
 
 	workspace.CurrentCamera:GetPropertyChangedSignal("CameraSubject"):Connect(function()
@@ -600,9 +600,9 @@ if RetrofiyConfig.RetroCharacters then
 	spawn(function()
 		while true do
 			for _, humanoids in pairs(Humanoids) do -- Does not work if player has infinite health!
-				humanoids.MaxHealth += 0.00001
+				humanoids.MaxHealth += 0.1
 				RunService.RenderStepped:Wait()
-				humanoids.MaxHealth -= 0.00001
+				humanoids.MaxHealth -= 0.1
 			end
 			RunService.RenderStepped:Wait()
 		end
