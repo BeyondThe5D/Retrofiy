@@ -47,6 +47,9 @@ local NetworkClient = game:GetService("NetworkClient")
 local GuiService = game:GetService("GuiService")
 local HttpService = game:GetService("HttpService")
 
+local ConversionInfo = Instance.new("Message")
+ConversionInfo.Parent = workspace
+
 RunService:Set3dRenderingEnabled(false)
 
 local Player = Players.LocalPlayer
@@ -69,8 +72,12 @@ local function Connect(...)
 	return table.concat({...}, "/")
 end
 
+ConversionInfo.Text = "Checking assets..."
+
 local function DownloadFiles(directory)
 	for _, item in pairs(HttpService:JSONDecode(game:HttpGet(Connect("https://api.github.com/repos/BeyondThe5D/Retrofiy/contents", directory)))) do
+		ConversionInfo.Text = "Downloading assets..."
+
 		local NewPath = Connect(directory, item["name"])
 
 		if item["type"] == "dir" and not isfolder(NewPath) then
@@ -87,6 +94,8 @@ makefolder("Retrofiy\\Patches")
 DownloadFiles("Retrofiy") 
 
 if RetrofiyConfig.RetroLighting then
+	ConversionInfo.Text = "Converting lighting..."
+
 	local RestrictedLighting = {
 		["EnvironmentDiffuseScale"] = 0,
 		["EnvironmentSpecularScale"] = 0,
@@ -126,6 +135,8 @@ if RetrofiyConfig.RetroLighting then
 end
 
 if RetrofiyConfig.RetroCoreGui then
+	ConversionInfo.Text = "Converting core gui..."
+
 	local RetroGui = Instance.new("ScreenGui")
 	RetroGui.Parent = CoreGui
 
@@ -498,6 +509,8 @@ if RetrofiyConfig.RetroCoreGui then
 end
 
 if RetrofiyConfig.RetroWorkspace then
+	ConversionInfo.Text = "Converting workspace..."
+
 	local Surface = {"BackSurface", "BottomSurface", "FrontSurface", "LeftSurface", "RightSurface", "TopSurface"}
 	local _Faces = {"Back", "Bottom", "Front", "Left", "Right", "Top"}
 
@@ -554,6 +567,8 @@ if RetrofiyConfig.RetroWorkspace then
 end
 
 if RetrofiyConfig.RetroCharacters then
+	ConversionInfo.Text = "Converting characters..."
+
 	local Humanoids = {}
 
 	local function ConvertCharacter(object)
@@ -610,6 +625,8 @@ if RetrofiyConfig.RetroCharacters then
 end
 
 if RetrofiyConfig.RetroChat then
+	ConversionInfo.Text = "Converting chat..."
+
 	if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then
 		local ChatFrame = Player.PlayerGui.Chat.Frame
 		ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 32)
@@ -655,7 +672,10 @@ end
 local Patch = "Retrofiy\\Patches\\" .. game.PlaceId .. ".lua"
 
 if isfile(Patch) then
+	ConversionInfo.Text = "Applying patch..."
 	loadstring(readfile(Patch))()
 end
 
 RunService:Set3dRenderingEnabled(true)
+
+ConversionInfo:Destroy()
