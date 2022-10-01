@@ -453,7 +453,7 @@ if RetrofiyConfig.RetroCoreGui then
 		BackpackButton.ImageLabel.Image = GetAsset("Retrofiy/Assets/Textures/" .. BackpackTextures[CoreGui.RobloxGui.Backpack.Inventory.Visible])
 	end)
 
-	local function ConvertScrollingFrame(scrollingframe)
+	local function ConvertScrollingFrame(scrollingframe) -- Maybe change the thickness of the scrollbar to?
 		scrollingframe.ScrollBarImageColor3 = Color3.fromRGB(56, 56, 56)
 		scrollingframe.ScrollBarImageTransparency = 0
 		scrollingframe.Changed:Connect(function()
