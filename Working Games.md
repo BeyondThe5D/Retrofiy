@@ -8,7 +8,7 @@ Games that were tested and work completely fine without any big/known issues! **
 - [Down Hill Smash](https://www.roblox.com/games/191220)
 - [Natural Disaster Survival](https://www.roblox.com/games/189707)
 - [Left 4 Survival](https://www.roblox.com/games/24184676)
-- [Classic Dodge The Teapots of Doom!](https://www.roblox.com/games/44814) -- Teapots have buggy studs on them. (Fix soon)
+- [Classic Dodge The Teapots of Doom!](https://www.roblox.com/games/44814) -- Teapots have buggy studs on them. (Fixed soon.)
 - [Redwood Prison](https://www.roblox.com/games/402122991)
 - [Custom Image Roleplay](https://www.roblox.com/games/7007567268)
-- [Stop it, Slender!](https://www.roblox.com/games/30869879) -- Playerlist will break after rounds.
+- [Stop it, Slender!](https://www.roblox.com/games/30869879) -- Playerlist will break after rounds. (Playerlist being rewritten soon.)
