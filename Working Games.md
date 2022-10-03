@@ -8,3 +8,4 @@ Games that were tested and work completely fine without any big/known issues! **
 - https://www.roblox.com/games/4951068818/Empty-Baseplate-R6
 - https://www.roblox.com/games/44814/Classic-Dodge-The-Teapots-of-Doom
 - https://www.roblox.com/games/191220/Down-Hill-Smash
+- https://www.roblox.com/games/189707/Natural-Disaster-Survival
