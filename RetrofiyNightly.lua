@@ -52,6 +52,13 @@ ConversionInfo.Parent = workspace
 
 RunService:Set3dRenderingEnabled(false)
 
+if identifyexecutor():lower():find("krnl") then -- Temporary
+	getgenv().sethiddenproperty = function(obj, prop, value)
+		setscriptable(obj, prop, true)
+		obj[prop] = value
+	end
+end
+
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
 local Character = Player.Character or Player.CharacterAdded:Wait()
