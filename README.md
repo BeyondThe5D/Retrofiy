@@ -6,6 +6,7 @@ Retrofiy aims to accurately convert any Roblox game that the script is executed 
 The end goal for Retrofiy is to be achieve high accuracy, high compatibility and be future-proofed so whenever the project gets discontinued, the code should hopefully still run fine years down the line!
 # Confirmed working exploits
 - [Synapse X](https://x.synapse.to)
+- [Krnl](https://krnl.place)
 - [Script-Ware](https://script-ware.com) - Recommended for new exploiters!
 # Script
 ```lua
