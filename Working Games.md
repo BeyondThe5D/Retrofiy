@@ -9,3 +9,5 @@ Games that were tested and work completely fine without any big/known issues! **
 - [Natural Disaster Survival](https://www.roblox.com/games/189707)
 - [Left 4 Survival](https://www.roblox.com/games/24184676)
 - [Redwood Prison](https://www.roblox.com/games/402122991)
+- [Custom Image Roleplay](https://www.roblox.com/games/7007567268)
+- [Stop it, Slender!](https://www.roblox.com/games/30869879)
