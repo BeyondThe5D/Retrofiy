@@ -416,18 +416,22 @@ if RetrofiyConfig.RetroCoreGui then
 				end
 			end
 		end)
+		
+		spawn(function()
+			local SpecialPlayer = SpecialPlayers[player.UserId]
 
-		local SpecialPlayer = SpecialPlayers[player.UserId]
-
-		if SpecialPlayer then
-			Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. SpecialPlayer)
-		elseif player.MembershipType == Enum.MembershipType.Premium then
-			if RetrofiyConfig.BCOnly then
-				Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. Memberships["33"])
-			else
-				Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"])
+			if SpecialPlayer then
+				Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. SpecialPlayer)
+			elseif player:IsInGroup(1200769) then
+				Icon.Image = GetAsset("Retrofiy/Assets/Textures/icon_admin-16.png")
+			elseif player.MembershipType == Enum.MembershipType.Premium then
+				if RetrofiyConfig.BCOnly then
+					Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. Memberships["33"])
+				else
+					Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"])
+				end
 			end
-		end
+		end)
 	end
 
 	for _, teams in pairs(Teams:GetChildren()) do
@@ -640,9 +644,10 @@ if RetrofiyConfig.RetroChat then
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Position = UDim2.new(0, 7, 0, 5)
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Size = UDim2.new(1, -14, 1, -10)
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.Position = UDim2.new(0, 7, 0, 2)
-		ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+		local Scroller = ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller
+		Scroller.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
 
-		for _, messages in pairs(ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller:GetChildren()) do
+		for _, messages in pairs(Scroller:GetChildren()) do
 			local TextLabel = messages:FindFirstChildOfClass("TextLabel")
 
 			if TextLabel and TextLabel.Text == "Chat '/?' or '/help' for a list of chat commands." then
@@ -662,15 +667,29 @@ if RetrofiyConfig.RetroChat then
 			ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.Position = UDim2.new(0, 7, 0, 2)
 		end)
 
+		Scroller.ChildAdded:Connect(function(object)
+			RunService.RenderStepped:Wait()
+			
+			if object:FindFirstChildOfClass("TextLabel") then
+				local Message = object:FindFirstChildOfClass("TextLabel")
+				
+				if not Message:FindFirstChildOfClass("TextButton") then
+					if Message.Text:find("Your friend ") then
+						object:Destroy()
+					end
+				end
+			end
+		end)
+
 		local function UpdateBarThickness()
-			if ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller.ScrollBarThickness == 4 then
-				ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller.ScrollBarThickness = 7
+			if Scroller.ScrollBarThickness == 4 then
+				Scroller.ScrollBarThickness = 7
 			end
 		end
 
 		UpdateBarThickness()
 
-		ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller:GetPropertyChangedSignal("ScrollBarThickness"):Connect(function(value)
+		Scroller:GetPropertyChangedSignal("ScrollBarThickness"):Connect(function(value)
 			UpdateBarThickness()
 		end)
 	end
