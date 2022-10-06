@@ -9,11 +9,11 @@ The end goal for Retrofiy is to be achieve high accuracy, high compatibility and
 - [Krnl](https://krnl.place)
 - [Script-Ware](https://script-ware.com) - Recommended for new exploiters!
 # Script
-Stable Build: (Recommended)
+Stable build: (Recommended)
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/Retrofiy.lua"))()
 ```
-Nightly Build:
+Nightly build:
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/RetrofiyNightly.lua"))()
 ```
