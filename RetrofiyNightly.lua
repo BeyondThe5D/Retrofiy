@@ -85,12 +85,12 @@ local function DownloadFiles(directory)
 	for _, item in pairs(HttpService:JSONDecode(game:HttpGet(Connect("https://api.github.com/repos/BeyondThe5D/Retrofiy/contents", directory)))) do
 		local NewPath = Connect(directory, item["name"])
 
-		if item["type"] == "file" and not isfile(NewPath) then
-			ConversionInfo.Text = "Downloading assets..."
-			writefile(NewPath, game:HttpGet(item["download_url"]))
-		elseif item["type"] == "dir" then
+		if item["type"] == "dir" then
 			makefolder(NewPath)
 			DownloadFiles(NewPath)
+		elseif item["type"] == "file" and not isfile(NewPath) then
+			ConversionInfo.Text = "Downloading assets..."
+			writefile(NewPath, game:HttpGet(item["download_url"]))
 		end
 	end
 end
@@ -418,7 +418,7 @@ if RetrofiyConfig.RetroCoreGui then
 
 		spawn(function()
 			local SpecialPlayer = SpecialPlayers[player.UserId]
-			
+
 			if player.UserId == game.CreatorId then
 				Icon.Image = GetAsset("Retrofiy/Assets/Textures/icon_placeowner.png")
 			elseif SpecialPlayer then
@@ -644,9 +644,9 @@ if RetrofiyConfig.RetroChat then
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.Position = UDim2.new(0, 7, 0, 2)
 		local Scroller = ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller
 		Scroller.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
-		
+
 		ChatFrame.ChatChannelParentFrame.Size = UDim2.new(1, 0, 1, -27)
-		
+
 		for _, messages in pairs(Scroller:GetChildren()) do
 			local TextLabel = messages:FindFirstChildOfClass("TextLabel")
 
