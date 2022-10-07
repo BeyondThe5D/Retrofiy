@@ -83,22 +83,21 @@ ConversionInfo.Text = "Checking assets..."
 
 local function DownloadFiles(directory)
 	for _, item in pairs(HttpService:JSONDecode(game:HttpGet(Connect("https://api.github.com/repos/BeyondThe5D/Retrofiy/contents", directory)))) do
-		ConversionInfo.Text = "Downloading assets..."
-
 		local NewPath = Connect(directory, item["name"])
 
-		if item["type"] == "dir" and not isfolder(NewPath) then
+		if item["type"] == "file" and not isfile(NewPath) then
+			ConversionInfo.Text = "Downloading assets..."
+			writefile(NewPath, game:HttpGet(item["download_url"]))
+		elseif item["type"] == "dir" then
 			makefolder(NewPath)
 			DownloadFiles(NewPath)
-		elseif item["type"] == "file" and not isfile(NewPath) then
-			writefile(NewPath, game:HttpGet(item["download_url"]))
 		end
 	end
 end
 
 makefolder("Retrofiy")
 makefolder("Retrofiy\\Patches")
-DownloadFiles("Retrofiy") 
+DownloadFiles("Retrofiy")
 
 if RetrofiyConfig.RetroLighting then
 	ConversionInfo.Text = "Converting lighting..."
@@ -416,11 +415,13 @@ if RetrofiyConfig.RetroCoreGui then
 				end
 			end
 		end)
-		
+
 		spawn(function()
 			local SpecialPlayer = SpecialPlayers[player.UserId]
-
-			if SpecialPlayer then
+			
+			if player.UserId == game.CreatorId then
+				Icon.Image = GetAsset("Retrofiy/Assets/Textures/icon_placeowner.png")
+			elseif SpecialPlayer then
 				Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. SpecialPlayer)
 			elseif player:IsInGroup(1200769) then
 				Icon.Image = GetAsset("Retrofiy/Assets/Textures/icon_admin-16.png")
@@ -592,11 +593,7 @@ if RetrofiyConfig.RetroCharacters then
 				table.insert(Humanoids, object)
 			end
 		elseif object:IsA("Sound") and object.SoundId == "rbxasset://sounds/uuhhh.mp3" then
-			object:GetPropertyChangedSignal("Playing"):Connect(function()
-				object:Stop()
-				object.SoundId = GetAsset("Retrofiy/Assets/Sounds/uuhhh.mp3")
-				object:Play()
-			end)
+			object.SoundId = GetAsset("Retrofiy/Assets/Sounds/uuhhh.mp3")
 		end
 	end
 
@@ -640,13 +637,16 @@ if RetrofiyConfig.RetroChat then
 
 	if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then
 		local ChatFrame = Player.PlayerGui.Chat.Frame
+		ChatFrame.ChatBarParentFrame.Position = UDim2.new(0, 0, 1, -23)
 		ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 32)
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Position = UDim2.new(0, 7, 0, 5)
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Size = UDim2.new(1, -14, 1, -10)
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.Position = UDim2.new(0, 7, 0, 2)
 		local Scroller = ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller
 		Scroller.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
-
+		
+		ChatFrame.ChatChannelParentFrame.Size = UDim2.new(1, 0, 1, -27)
+		
 		for _, messages in pairs(Scroller:GetChildren()) do
 			local TextLabel = messages:FindFirstChildOfClass("TextLabel")
 
@@ -669,10 +669,10 @@ if RetrofiyConfig.RetroChat then
 
 		Scroller.ChildAdded:Connect(function(object)
 			RunService.RenderStepped:Wait()
-			
+
 			if object:FindFirstChildOfClass("TextLabel") then
 				local Message = object:FindFirstChildOfClass("TextLabel")
-				
+
 				if not Message:FindFirstChildOfClass("TextButton") then
 					if Message.Text:find("Your friend ") then
 						object:Destroy()
