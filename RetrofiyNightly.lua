@@ -79,8 +79,6 @@ local function Connect(...)
 	return table.concat({...}, "/")
 end
 
-ConversionInfo.Text = "Checking assets..."
-
 local function DownloadFiles(directory)
 	for _, item in pairs(HttpService:JSONDecode(game:HttpGet(Connect("https://api.github.com/repos/BeyondThe5D/Retrofiy/contents", directory)))) do
 		local NewPath = Connect(directory, item["name"])
@@ -94,6 +92,8 @@ local function DownloadFiles(directory)
 		end
 	end
 end
+
+ConversionInfo.Text = "Checking assets..."
 
 makefolder("Retrofiy")
 makefolder("Retrofiy\\Patches")
@@ -144,6 +144,7 @@ if RetrofiyConfig.RetroCoreGui then
 	ConversionInfo.Text = "Converting core gui..."
 
 	local RetroGui = Instance.new("ScreenGui")
+	RetroGui.IgnoreGuiInset = true
 	RetroGui.Parent = CoreGui
 
 	local Memberships = {
@@ -167,14 +168,13 @@ if RetrofiyConfig.RetroCoreGui then
 	Topbar.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
 	Topbar.BackgroundTransparency = Player.PlayerGui:GetTopbarTransparency()
 	Topbar.BorderSizePixel = 0
-	Topbar.Position = UDim2.new(0, 0, 0, -36)
 	Topbar.Size = UDim2.new(1, 0, 0, 36)
 	Topbar.Parent = RetroGui
 	local PlayerlistContainer = Instance.new("ScrollingFrame")
 	PlayerlistContainer.AnchorPoint = Vector2.new(1, 0)
 	PlayerlistContainer.BackgroundTransparency = 1
 	PlayerlistContainer.BorderSizePixel = 0
-	PlayerlistContainer.Position = UDim2.new(1, 0, 0, 2)
+	PlayerlistContainer.Position = UDim2.new(1, 0, 0, 38)
 	PlayerlistContainer.Size = UDim2.new(0, 170, 0.5, 0)
 	PlayerlistContainer.AutomaticCanvasSize = Enum.AutomaticSize.Y
 	PlayerlistContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
@@ -223,7 +223,7 @@ if RetrofiyConfig.RetroCoreGui then
 	KickMessage.AnchorPoint = Vector2.new(0.5, 0)
 	KickMessage.BackgroundColor3 = Color3.fromRGB(253, 68, 72)
 	KickMessage.BorderSizePixel = 0
-	KickMessage.Position = UDim2.new(0.5, 0, 0, 0)
+	KickMessage.Position = UDim2.new(0.5, 0, 0, 36)
 	KickMessage.Size = UDim2.new(0.5, 0, 0, 80)
 	KickMessage.Visible = false
 	KickMessage.Font = Enum.Font.SourceSansBold
@@ -485,22 +485,16 @@ if RetrofiyConfig.RetroCoreGui then
 			ConvertScrollingFrame(scrollingframe)
 		end
 	end)
+	
+	local MessageReplacement = {
+		["You have been kicked from the game"] = "You have lost the connection to the game"
+	}
+	
+	GuiService.ErrorMessageChanged:Connect(function(message)
+		GuiService:ClearError()
 
-	NetworkClient.ChildRemoved:Connect(function(object)
-		if object:IsA("ClientReplicator") then
-			GuiService:ClearError()
-
-			local ErrorPrompt = CoreGui.RobloxPromptGui.promptOverlay:WaitForChild("ErrorPrompt")
-			local KickPrompt = ErrorPrompt.MessageArea.ErrorFrame.ErrorMessage.Text
-
-			if KickPrompt == "You were kicked from this experience: Player service requests player disconnect\n(Error Code: 267)" then
-				KickMessage.Text = "This game has shut down"
-			else
-				KickMessage.Text = KickPrompt:split("You were kicked from this experience: ")[2]:split("\n(Error Code: ")[1]
-			end
-
-			KickMessage.Visible = true
-		end
+		KickMessage.Text = MessageReplacement[message] or message
+		KickMessage.Visible = true
 	end)
 
 	RunService.RenderStepped:Connect(function()
