@@ -491,16 +491,20 @@ if RetrofiyConfig.RetroCoreGui then
 	local MessageReplacement = {
 		["You have been kicked from the game"] = "You have lost the connection to the game"
 	}
-
+	
+	local function DestroyGui(gui)
+		if gui ~= OriginalChat then
+			gui:Destroy()
+		end
+	end
+	
 	GuiService.ErrorMessageChanged:Connect(function(message)
 		for _, guis in pairs(Player.PlayerGui:GetChildren()) do
-			if guis ~= OriginalChat then
-				guis:Destroy()
-			end
+			DestroyGui(guis)
 		end
 		
 		Player.PlayerGui.ChildAdded:Connect(function(gui)
-			gui:Destroy()
+			DestroyGui(gui)
 		end)
 
 		GuiService:ClearError()
