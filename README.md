@@ -17,6 +17,9 @@ Nightly build:
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/RetrofiyNightly.lua"))()
 ```
+# Discord
+Join the community!
+https://discord.gg/4rYMxBMQvv
 # Credits
 - [BeyondThe5D](https://github.com/BeyondThe5D) - Main programmer & project leader.
 - [AdolfRoxler](https://github.com/AdolfRoxler) - Helped with memory leaks.
