@@ -489,20 +489,21 @@ if RetrofiyConfig.RetroCoreGui then
 	end)
 
 	local MessageReplacement = {
-		["You have been kicked from the game"] = "You have lost the connection to the game"
+		["You have been kicked from the game"] = "You have lost the connection to the game",
+		["Player service requests player disconnect"] = "This game has shut down"
 	}
-	
+
 	local function DestroyGui(gui)
 		if gui ~= OriginalChat then
 			gui:Destroy()
 		end
 	end
-	
+
 	GuiService.ErrorMessageChanged:Connect(function(message)
 		for _, guis in pairs(Player.PlayerGui:GetChildren()) do
 			DestroyGui(guis)
 		end
-		
+
 		Player.PlayerGui.ChildAdded:Connect(function(gui)
 			DestroyGui(gui)
 		end)
@@ -653,10 +654,10 @@ end
 
 if RetrofiyConfig.RetroChat then
 	ConversionInfo.Text = "Converting chat..."
-	
+
 	if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then
 		OriginalChat = Player.PlayerGui.Chat
-		
+
 		local ChatFrame = OriginalChat.Frame
 		ChatFrame.ChatBarParentFrame.Position = UDim2.new(0, 0, 1, -23)
 		ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 32)
