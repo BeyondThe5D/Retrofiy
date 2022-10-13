@@ -496,15 +496,15 @@ if RetrofiyConfig.RetroCoreGui then
 		KickMessage.Text = MessageReplacement[message] or message
 		KickMessage.Visible = true
 	end)
-	
+
 	local HealthBarNamePosition = {
 		[true] = UDim2.new(0, 7, 0, 0),
 		[false] = UDim2.new(0, 7, 0, 3)
 	}
-	
+
 	RunService.RenderStepped:Connect(function()
 		local HealthVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health)
-		
+
 		if not StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList) then
 			CanTogglePlayerlist = false
 			PlayerlistContainer.Visible = false
@@ -671,13 +671,12 @@ if RetrofiyConfig.RetroChat then
 		end)
 
 		Scroller.ChildAdded:Connect(function(object)
-			RunService.RenderStepped:Wait()
-
 			if object:FindFirstChildOfClass("TextLabel") then
 				local Message = object:FindFirstChildOfClass("TextLabel")
 
 				if not Message:FindFirstChildOfClass("TextButton") then
 					if Message.Text:find("Your friend ") then
+						RunService.RenderStepped:Wait()
 						object:Destroy()
 					end
 				end
