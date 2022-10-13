@@ -654,9 +654,9 @@ end
 if RetrofiyConfig.RetroChat then
 	ConversionInfo.Text = "Converting chat..."
 	
-	OriginalChat = Player.PlayerGui:WaitForChild("Chat")
-	
-	if Chat.LoadDefaultChat then
+	if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then
+		OriginalChat = Player.PlayerGui.Chat
+		
 		local ChatFrame = OriginalChat.Frame
 		ChatFrame.ChatBarParentFrame.Position = UDim2.new(0, 0, 1, -23)
 		ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 32)
