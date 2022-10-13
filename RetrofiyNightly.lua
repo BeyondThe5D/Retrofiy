@@ -491,6 +491,10 @@ if RetrofiyConfig.RetroCoreGui then
 	}
 
 	GuiService.ErrorMessageChanged:Connect(function(message)
+		if Player:FindFirstChild("PlayerGui") then
+			Player.PlayerGui:Destroy()
+		end
+		
 		GuiService:ClearError()
 
 		KickMessage.Text = MessageReplacement[message] or message
@@ -671,12 +675,13 @@ if RetrofiyConfig.RetroChat then
 		end)
 
 		Scroller.ChildAdded:Connect(function(object)
+			RunService.RenderStepped:Wait()
+
 			if object:FindFirstChildOfClass("TextLabel") then
 				local Message = object:FindFirstChildOfClass("TextLabel")
 
 				if not Message:FindFirstChildOfClass("TextButton") then
 					if Message.Text:find("Your friend ") then
-						RunService.RenderStepped:Wait()
 						object:Destroy()
 					end
 				end
