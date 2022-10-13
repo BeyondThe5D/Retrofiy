@@ -485,19 +485,26 @@ if RetrofiyConfig.RetroCoreGui then
 			ConvertScrollingFrame(scrollingframe)
 		end
 	end)
-	
+
 	local MessageReplacement = {
 		["You have been kicked from the game"] = "You have lost the connection to the game"
 	}
-	
+
 	GuiService.ErrorMessageChanged:Connect(function(message)
 		GuiService:ClearError()
 
 		KickMessage.Text = MessageReplacement[message] or message
 		KickMessage.Visible = true
 	end)
-
+	
+	local HealthBarNamePosition = {
+		[true] = UDim2.new(0, 7, 0, 0),
+		[false] = UDim2.new(0, 7, 0, 3)
+	}
+	
 	RunService.RenderStepped:Connect(function()
+		local HealthVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health)
+		
 		if not StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList) then
 			CanTogglePlayerlist = false
 			PlayerlistContainer.Visible = false
@@ -511,6 +518,8 @@ if RetrofiyConfig.RetroCoreGui then
 		Topbar.BackgroundTransparency = Player.PlayerGui:GetTopbarTransparency()
 		BackpackButton.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
 		ChatButton.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Chat)
+		HealthBar.Visible = HealthVisibility
+		Username.Position = HealthBarNamePosition[HealthVisibility]
 	end)
 end
 
