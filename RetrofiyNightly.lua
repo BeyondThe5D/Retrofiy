@@ -68,6 +68,8 @@ local MaxInteger = 2147483647
 
 local GetAsset = getsynasset or getcustomasset
 
+local OriginalChat
+
 local function ImprovedKeyPress(keys)
 	for _, key in pairs(keys) do
 		keypress(key)
@@ -491,10 +493,16 @@ if RetrofiyConfig.RetroCoreGui then
 	}
 
 	GuiService.ErrorMessageChanged:Connect(function(message)
-		if Player:FindFirstChild("PlayerGui") then
-			Player.PlayerGui:Destroy()
+		for _, guis in pairs(Player.PlayerGui:GetChildren()) do
+			if guis ~= OriginalChat then
+				guis:Destroy()
+			end
 		end
 		
+		Player.PlayerGui.ChildAdded:Connect(function(gui)
+			gui:Destroy()
+		end)
+
 		GuiService:ClearError()
 
 		KickMessage.Text = MessageReplacement[message] or message
@@ -641,9 +649,11 @@ end
 
 if RetrofiyConfig.RetroChat then
 	ConversionInfo.Text = "Converting chat..."
-
-	if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then
-		local ChatFrame = Player.PlayerGui.Chat.Frame
+	
+	OriginalChat = Player.PlayerGui:WaitForChild("Chat")
+	
+	if Chat.LoadDefaultChat then
+		local ChatFrame = OriginalChat.Frame
 		ChatFrame.ChatBarParentFrame.Position = UDim2.new(0, 0, 1, -23)
 		ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 32)
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Position = UDim2.new(0, 7, 0, 5)
