@@ -68,6 +68,7 @@ CreatorName.BackgroundTransparency = 1
 CreatorName.Position = UDim2.new(0, 0, 0, 80)
 CreatorName.Size = UDim2.new(1, 0, 0, 30)
 CreatorName.Font = Enum.Font.SourceSans
+CreatorName.Text = "By John Doe" 
 CreatorName.TextColor3 = Color3.fromRGB(255, 255, 255)
 CreatorName.TextScaled = true
 CreatorName.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
@@ -103,15 +104,6 @@ Message.Text = "Requesting Server..."
 Message.TextColor3 = Color3.fromRGB(255, 255, 255)
 Message.TextSize = 18
 Message.Parent = Information
-
-local Success, CreatorsName = pcall(function()
-	return Players:GetNameFromUserIdAsync(game.CreatorId)
-end)
-
-repeat 
-	RunService.RenderStepped:Wait()
-until Success
-CreatorName.Text = "By " .. CreatorsName
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
