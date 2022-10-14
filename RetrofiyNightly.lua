@@ -498,15 +498,21 @@ if RetrofiyConfig.RetroCoreGui then
 			gui:Destroy()
 		end
 	end
-
+	
+	local RemovedGuis = false
+	
 	GuiService.ErrorMessageChanged:Connect(function(message)
-		for _, guis in pairs(Player.PlayerGui:GetChildren()) do
-			DestroyGui(guis)
-		end
+		if not RemovedGuis then
+			RemovedGuis = true
+			
+			for _, guis in pairs(Player.PlayerGui:GetChildren()) do
+				DestroyGui(guis)
+			end
 
-		Player.PlayerGui.ChildAdded:Connect(function(gui)
-			DestroyGui(gui)
-		end)
+			Player.PlayerGui.ChildAdded:Connect(function(gui)
+				DestroyGui(gui)
+			end)
+		end
 
 		GuiService:ClearError()
 
@@ -604,7 +610,12 @@ if RetrofiyConfig.RetroCharacters then
 	ConversionInfo.Text = "Converting characters..."
 
 	local Humanoids = {}
-
+	
+	local WomanLegs = {
+		[746826007] = 81628361,
+		[746825633] = 81628308
+	}
+	
 	local function ConvertCharacter(object)
 		if object:IsA("Humanoid") then
 			if object.HealthDisplayType == Enum.HumanoidHealthDisplayType.DisplayWhenDamaged then
@@ -616,6 +627,12 @@ if RetrofiyConfig.RetroCharacters then
 			end
 		elseif object:IsA("Sound") and object.SoundId == "rbxasset://sounds/uuhhh.mp3" then
 			object.SoundId = GetAsset("Retrofiy/Assets/Sounds/uuhhh.mp3")
+		elseif object:IsA("CharacterMesh") then 
+			local MeshId = WomanLegs[object.MeshId]
+			
+			if MeshId then
+				object.MeshId = MeshId
+			end
 		end
 	end
 
