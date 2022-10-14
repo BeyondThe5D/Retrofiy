@@ -29,10 +29,6 @@ local RetrofiyConfig = {
 	BCOnly = false -- [O] -- Makes all premium players appear as BC players instead of it being User ID linked
 }
 
-if not game:IsLoaded() then
-	game.Loaded:Wait()
-end
-
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
 local MaterialService = game:GetService("MaterialService")
@@ -46,11 +42,80 @@ local UserInputService = game:GetService("UserInputService")
 local NetworkClient = game:GetService("NetworkClient")
 local GuiService = game:GetService("GuiService")
 local HttpService = game:GetService("HttpService")
+local MarketplaceService = game:GetService("MarketplaceService")
 
-local ConversionInfo = Instance.new("Message")
-ConversionInfo.Parent = workspace
+CoreGui:WaitForChild("RobloxLoadingGui").Enabled = false
 
-RunService:Set3dRenderingEnabled(false)
+local LoadingScreen = Instance.new("ScreenGui")
+LoadingScreen.DisplayOrder = 2147483647
+LoadingScreen.IgnoreGuiInset = true
+LoadingScreen.Parent = CoreGui
+local Background = Instance.new("ImageLabel")
+Background.Size = UDim2.new(1, 0, 1, 0)
+Background.Image = "rbxasset://textures/loading/darkLoadingTexture.png"
+Background.ScaleType = Enum.ScaleType.Tile
+Background.TileSize = UDim2.new(0, 512, 0, 552)
+Background.Parent = LoadingScreen
+local Information = Instance.new("Folder")
+Information.Parent = Background
+local GameInformation = Instance.new("Frame")
+GameInformation.BackgroundTransparency = 1
+GameInformation.Position = UDim2.new(0, 100, 1, -150)
+GameInformation.Size = UDim2.new(0.4, 0, 0, 110)
+GameInformation.Parent = Information
+local CreatorName = Instance.new("TextLabel")
+CreatorName.BackgroundTransparency = 1
+CreatorName.Position = UDim2.new(0, 0, 0, 80)
+CreatorName.Size = UDim2.new(1, 0, 0, 30)
+CreatorName.Font = Enum.Font.SourceSans
+CreatorName.TextColor3 = Color3.fromRGB(255, 255, 255)
+CreatorName.TextScaled = true
+CreatorName.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+CreatorName.TextStrokeTransparency = 0
+CreatorName.TextXAlignment = Enum.TextXAlignment.Left
+CreatorName.TextYAlignment = Enum.TextYAlignment.Top
+CreatorName.Parent = GameInformation
+local PlaceName = Instance.new("TextLabel")
+PlaceName.BackgroundTransparency = 1
+PlaceName.Position = UDim2.new(0, 0, 0, 0)
+PlaceName.Size = UDim2.new(1, 0, 0, 80)
+PlaceName.Font = Enum.Font.SourceSans
+PlaceName.Text = MarketplaceService:GetProductInfo(game.PlaceId).Name
+PlaceName.TextColor3 = Color3.fromRGB(255, 255, 255)
+PlaceName.TextScaled = true
+PlaceName.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+PlaceName.TextStrokeTransparency = 0
+PlaceName.TextXAlignment = Enum.TextXAlignment.Left
+PlaceName.TextYAlignment = Enum.TextYAlignment.Bottom
+PlaceName.Parent = GameInformation
+local CloseButton = Instance.new("ImageButton")
+CloseButton.BackgroundTransparency = 1
+CloseButton.Position = UDim2.new(1, -37, 0, 5)
+CloseButton.Size = UDim2.new(0, 32, 0, 32)
+CloseButton.Image = "rbxasset://textures/loading/cancelButton.png"
+CloseButton.Parent = Information
+local Message = Instance.new("TextLabel")
+Message.BackgroundTransparency = 1
+Message.Position = UDim2.new(0.25, 0, 1, -120)
+Message.Size = UDim2.new(0.5, 0, 0, 80)
+Message.Font = Enum.Font.SourceSansBold
+Message.Text = "Requesting Server..."
+Message.TextColor3 = Color3.fromRGB(255, 255, 255)
+Message.TextSize = 18
+Message.Parent = Information
+
+local Success, CreatorsName = pcall(function()
+	return Players:GetNameFromUserIdAsync(game.CreatorId)
+end)
+
+repeat 
+	RunService.RenderStepped:Wait()
+until Success
+CreatorName.Text = "By " .. CreatorsName
+
+if not game:IsLoaded() then
+	game.Loaded:Wait()
+end
 
 if identifyexecutor():lower():find("krnl") then -- Temporary
 	getgenv().sethiddenproperty = function(obj, prop, value)
@@ -89,21 +154,16 @@ local function DownloadFiles(directory)
 			makefolder(NewPath)
 			DownloadFiles(NewPath)
 		elseif item["type"] == "file" and not isfile(NewPath) then
-			ConversionInfo.Text = "Downloading assets..."
 			writefile(NewPath, game:HttpGet(item["download_url"]))
 		end
 	end
 end
-
-ConversionInfo.Text = "Checking assets..."
 
 makefolder("Retrofiy")
 makefolder("Retrofiy\\Patches")
 DownloadFiles("Retrofiy")
 
 if RetrofiyConfig.RetroLighting then
-	ConversionInfo.Text = "Converting lighting..."
-
 	local RestrictedLighting = {
 		["EnvironmentDiffuseScale"] = 0,
 		["EnvironmentSpecularScale"] = 0,
@@ -143,8 +203,6 @@ if RetrofiyConfig.RetroLighting then
 end
 
 if RetrofiyConfig.RetroCoreGui then
-	ConversionInfo.Text = "Converting core gui..."
-
 	local RetroGui = Instance.new("ScreenGui")
 	RetroGui.IgnoreGuiInset = true
 	RetroGui.Parent = CoreGui
@@ -498,13 +556,13 @@ if RetrofiyConfig.RetroCoreGui then
 			gui:Destroy()
 		end
 	end
-	
+
 	local RemovedGuis = false
-	
+
 	GuiService.ErrorMessageChanged:Connect(function(message)
 		if not RemovedGuis then
 			RemovedGuis = true
-			
+
 			for _, guis in pairs(Player.PlayerGui:GetChildren()) do
 				DestroyGui(guis)
 			end
@@ -549,8 +607,6 @@ if RetrofiyConfig.RetroCoreGui then
 end
 
 if RetrofiyConfig.RetroWorkspace then
-	ConversionInfo.Text = "Converting workspace..."
-
 	local Surface = {"BackSurface", "BottomSurface", "FrontSurface", "LeftSurface", "RightSurface", "TopSurface"}
 	local _Faces = {"Back", "Bottom", "Front", "Left", "Right", "Top"}
 
@@ -607,15 +663,13 @@ if RetrofiyConfig.RetroWorkspace then
 end
 
 if RetrofiyConfig.RetroCharacters then
-	ConversionInfo.Text = "Converting characters..."
-
 	local Humanoids = {}
-	
+
 	local WomanLegs = {
 		[746826007] = 81628361,
 		[746825633] = 81628308
 	}
-	
+
 	local function ConvertCharacter(object)
 		if object:IsA("Humanoid") then
 			if object.HealthDisplayType == Enum.HumanoidHealthDisplayType.DisplayWhenDamaged then
@@ -629,7 +683,7 @@ if RetrofiyConfig.RetroCharacters then
 			object.SoundId = GetAsset("Retrofiy/Assets/Sounds/uuhhh.mp3")
 		elseif object:IsA("CharacterMesh") then 
 			local MeshId = WomanLegs[object.MeshId]
-			
+
 			if MeshId then
 				object.MeshId = MeshId
 			end
@@ -672,8 +726,6 @@ if RetrofiyConfig.RetroCharacters then
 end
 
 if RetrofiyConfig.RetroChat then
-	ConversionInfo.Text = "Converting chat..."
-
 	if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then
 		OriginalChat = Player.PlayerGui.Chat
 
@@ -739,10 +791,7 @@ end
 local Patch = "Retrofiy\\Patches\\" .. game.PlaceId .. ".lua"
 
 if isfile(Patch) then
-	ConversionInfo.Text = "Applying patch..."
 	loadstring(readfile(Patch))()
 end
 
-RunService:Set3dRenderingEnabled(true)
-
-ConversionInfo:Destroy()
+LoadingScreen:Destroy()
