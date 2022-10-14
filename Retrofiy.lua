@@ -68,6 +68,8 @@ local MaxInteger = 2147483647
 
 local GetAsset = getsynasset or getcustomasset
 
+local OriginalChat
+
 local function ImprovedKeyPress(keys)
 	for _, key in pairs(keys) do
 		keypress(key)
@@ -79,26 +81,25 @@ local function Connect(...)
 	return table.concat({...}, "/")
 end
 
-ConversionInfo.Text = "Checking assets..."
-
 local function DownloadFiles(directory)
 	for _, item in pairs(HttpService:JSONDecode(game:HttpGet(Connect("https://api.github.com/repos/BeyondThe5D/Retrofiy/contents", directory)))) do
-		ConversionInfo.Text = "Downloading assets..."
-
 		local NewPath = Connect(directory, item["name"])
 
-		if item["type"] == "dir" and not isfolder(NewPath) then
+		if item["type"] == "dir" then
 			makefolder(NewPath)
 			DownloadFiles(NewPath)
 		elseif item["type"] == "file" and not isfile(NewPath) then
+			ConversionInfo.Text = "Downloading assets..."
 			writefile(NewPath, game:HttpGet(item["download_url"]))
 		end
 	end
 end
 
+ConversionInfo.Text = "Checking assets..."
+
 makefolder("Retrofiy")
 makefolder("Retrofiy\\Patches")
-DownloadFiles("Retrofiy") 
+DownloadFiles("Retrofiy")
 
 if RetrofiyConfig.RetroLighting then
 	ConversionInfo.Text = "Converting lighting..."
@@ -145,6 +146,7 @@ if RetrofiyConfig.RetroCoreGui then
 	ConversionInfo.Text = "Converting core gui..."
 
 	local RetroGui = Instance.new("ScreenGui")
+	RetroGui.IgnoreGuiInset = true
 	RetroGui.Parent = CoreGui
 
 	local Memberships = {
@@ -168,14 +170,13 @@ if RetrofiyConfig.RetroCoreGui then
 	Topbar.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
 	Topbar.BackgroundTransparency = Player.PlayerGui:GetTopbarTransparency()
 	Topbar.BorderSizePixel = 0
-	Topbar.Position = UDim2.new(0, 0, 0, -36)
 	Topbar.Size = UDim2.new(1, 0, 0, 36)
 	Topbar.Parent = RetroGui
 	local PlayerlistContainer = Instance.new("ScrollingFrame")
 	PlayerlistContainer.AnchorPoint = Vector2.new(1, 0)
 	PlayerlistContainer.BackgroundTransparency = 1
 	PlayerlistContainer.BorderSizePixel = 0
-	PlayerlistContainer.Position = UDim2.new(1, 0, 0, 2)
+	PlayerlistContainer.Position = UDim2.new(1, 0, 0, 38)
 	PlayerlistContainer.Size = UDim2.new(0, 170, 0.5, 0)
 	PlayerlistContainer.AutomaticCanvasSize = Enum.AutomaticSize.Y
 	PlayerlistContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
@@ -224,7 +225,7 @@ if RetrofiyConfig.RetroCoreGui then
 	KickMessage.AnchorPoint = Vector2.new(0.5, 0)
 	KickMessage.BackgroundColor3 = Color3.fromRGB(253, 68, 72)
 	KickMessage.BorderSizePixel = 0
-	KickMessage.Position = UDim2.new(0.5, 0, 0, 0)
+	KickMessage.Position = UDim2.new(0.5, 0, 0, 36)
 	KickMessage.Size = UDim2.new(0.5, 0, 0, 80)
 	KickMessage.Visible = false
 	KickMessage.Font = Enum.Font.SourceSansBold
@@ -417,17 +418,23 @@ if RetrofiyConfig.RetroCoreGui then
 			end
 		end)
 
-		local SpecialPlayer = SpecialPlayers[player.UserId]
+		spawn(function()
+			local SpecialPlayer = SpecialPlayers[player.UserId]
 
-		if SpecialPlayer then
-			Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. SpecialPlayer)
-		elseif player.MembershipType == Enum.MembershipType.Premium then
-			if RetrofiyConfig.BCOnly then
-				Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. Memberships["33"])
-			else
-				Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"])
+			if player.UserId == game.CreatorId then
+				Icon.Image = GetAsset("Retrofiy/Assets/Textures/icon_placeowner.png")
+			elseif SpecialPlayer then
+				Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. SpecialPlayer)
+			elseif player:IsInGroup(1200769) then
+				Icon.Image = GetAsset("Retrofiy/Assets/Textures/icon_admin-16.png")
+			elseif player.MembershipType == Enum.MembershipType.Premium then
+				if RetrofiyConfig.BCOnly then
+					Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. Memberships["33"])
+				else
+					Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"])
+				end
 			end
-		end
+		end)
 	end
 
 	for _, teams in pairs(Teams:GetChildren()) do
@@ -481,25 +488,48 @@ if RetrofiyConfig.RetroCoreGui then
 		end
 	end)
 
-	NetworkClient.ChildRemoved:Connect(function(object)
-		if object:IsA("ClientReplicator") then
-			GuiService:ClearError()
+	local MessageReplacement = {
+		["You have been kicked from the game"] = "You have lost the connection to the game",
+		["Player service requests player disconnect"] = "This game has shut down"
+	}
 
-			local ErrorPrompt = CoreGui.RobloxPromptGui.promptOverlay:WaitForChild("ErrorPrompt")
-			local KickPrompt = ErrorPrompt.MessageArea.ErrorFrame.ErrorMessage.Text
-
-			if KickPrompt == "You were kicked from this experience: Player service requests player disconnect\n(Error Code: 267)" then
-				KickMessage.Text = "This game has shut down"
-			else
-				KickMessage.Text = KickPrompt:split("You were kicked from this experience: ")[2]:split("\n(Error Code: ")[1]
+	local function DestroyGui(gui)
+		if gui ~= OriginalChat then
+			gui:Destroy()
+		end
+	end
+	
+	local RemovedGuis = false
+	
+	GuiService.ErrorMessageChanged:Connect(function(message)
+		if not RemovedGuis then
+			RemovedGuis = true
+			
+			for _, guis in pairs(Player.PlayerGui:GetChildren()) do
+				DestroyGui(guis)
 			end
 
-			KickMessage.Visible = true
+			Player.PlayerGui.ChildAdded:Connect(function(gui)
+				DestroyGui(gui)
+			end)
 		end
+
+		GuiService:ClearError()
+
+		KickMessage.Text = MessageReplacement[message] or message
+		KickMessage.Visible = true
 	end)
 
+	local HealthBarNamePosition = {
+		[true] = UDim2.new(0, 7, 0, 0),
+		[false] = UDim2.new(0, 7, 0, 3)
+	}
+
 	RunService.RenderStepped:Connect(function()
-		if not StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList) then
+		local PlayerlistVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList)
+		local HealthVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health)
+
+		if not PlayerlistVisibility then
 			CanTogglePlayerlist = false
 			PlayerlistContainer.Visible = false
 		else
@@ -512,6 +542,9 @@ if RetrofiyConfig.RetroCoreGui then
 		Topbar.BackgroundTransparency = Player.PlayerGui:GetTopbarTransparency()
 		BackpackButton.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
 		ChatButton.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Chat)
+		HealthBar.Visible = HealthVisibility
+		Username.Visible = HealthVisibility or PlayerlistVisibility
+		Username.Position = HealthBarNamePosition[HealthVisibility]
 	end)
 end
 
@@ -577,7 +610,12 @@ if RetrofiyConfig.RetroCharacters then
 	ConversionInfo.Text = "Converting characters..."
 
 	local Humanoids = {}
-
+	
+	local WomanLegs = {
+		[746826007] = 81628361,
+		[746825633] = 81628308
+	}
+	
 	local function ConvertCharacter(object)
 		if object:IsA("Humanoid") then
 			if object.HealthDisplayType == Enum.HumanoidHealthDisplayType.DisplayWhenDamaged then
@@ -588,11 +626,13 @@ if RetrofiyConfig.RetroCharacters then
 				table.insert(Humanoids, object)
 			end
 		elseif object:IsA("Sound") and object.SoundId == "rbxasset://sounds/uuhhh.mp3" then
-			object:GetPropertyChangedSignal("Playing"):Connect(function()
-				object:Stop()
-				object.SoundId = GetAsset("Retrofiy/Assets/Sounds/uuhhh.mp3")
-				object:Play()
-			end)
+			object.SoundId = GetAsset("Retrofiy/Assets/Sounds/uuhhh.mp3")
+		elseif object:IsA("CharacterMesh") then 
+			local MeshId = WomanLegs[object.MeshId]
+			
+			if MeshId then
+				object.MeshId = MeshId
+			end
 		end
 	end
 
@@ -635,14 +675,20 @@ if RetrofiyConfig.RetroChat then
 	ConversionInfo.Text = "Converting chat..."
 
 	if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then
-		local ChatFrame = Player.PlayerGui.Chat.Frame
+		OriginalChat = Player.PlayerGui.Chat
+
+		local ChatFrame = OriginalChat.Frame
+		ChatFrame.ChatBarParentFrame.Position = UDim2.new(0, 0, 1, -23)
 		ChatFrame.ChatBarParentFrame.Size = UDim2.new(1, 0, 0, 32)
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Position = UDim2.new(0, 7, 0, 5)
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Size = UDim2.new(1, -14, 1, -10)
 		ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.Position = UDim2.new(0, 7, 0, 2)
-		ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+		local Scroller = ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller
+		Scroller.UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
 
-		for _, messages in pairs(ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller:GetChildren()) do
+		ChatFrame.ChatChannelParentFrame.Size = UDim2.new(1, 0, 1, -27)
+
+		for _, messages in pairs(Scroller:GetChildren()) do
 			local TextLabel = messages:FindFirstChildOfClass("TextLabel")
 
 			if TextLabel and TextLabel.Text == "Chat '/?' or '/help' for a list of chat commands." then
@@ -662,15 +708,29 @@ if RetrofiyConfig.RetroChat then
 			ChatFrame.ChatBarParentFrame.Frame.BoxFrame.Frame.Position = UDim2.new(0, 7, 0, 2)
 		end)
 
+		Scroller.ChildAdded:Connect(function(object)
+			RunService.RenderStepped:Wait()
+
+			if object:FindFirstChildOfClass("TextLabel") then
+				local Message = object:FindFirstChildOfClass("TextLabel")
+
+				if not Message:FindFirstChildOfClass("TextButton") then
+					if Message.Text:find("Your friend ") then
+						object:Destroy()
+					end
+				end
+			end
+		end)
+
 		local function UpdateBarThickness()
-			if ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller.ScrollBarThickness == 4 then
-				ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller.ScrollBarThickness = 7
+			if Scroller.ScrollBarThickness == 4 then
+				Scroller.ScrollBarThickness = 7
 			end
 		end
 
 		UpdateBarThickness()
 
-		ChatFrame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller:GetPropertyChangedSignal("ScrollBarThickness"):Connect(function(value)
+		Scroller:GetPropertyChangedSignal("ScrollBarThickness"):Connect(function(value)
 			UpdateBarThickness()
 		end)
 	end
