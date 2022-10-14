@@ -520,9 +520,10 @@ if RetrofiyConfig.RetroCoreGui then
 	}
 
 	RunService.RenderStepped:Connect(function()
+		local PlayerlistVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList)
 		local HealthVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health)
 
-		if not StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList) then
+		if not PlayerlistVisibility then
 			CanTogglePlayerlist = false
 			PlayerlistContainer.Visible = false
 		else
@@ -536,6 +537,7 @@ if RetrofiyConfig.RetroCoreGui then
 		BackpackButton.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
 		ChatButton.Visible = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Chat)
 		HealthBar.Visible = HealthVisibility
+		Username.Visible = HealthVisibility or PlayerlistVisibility
 		Username.Position = HealthBarNamePosition[HealthVisibility]
 	end)
 end
