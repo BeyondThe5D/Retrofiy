@@ -43,6 +43,7 @@ local NetworkClient = game:GetService("NetworkClient")
 local GuiService = game:GetService("GuiService")
 local HttpService = game:GetService("HttpService")
 local MarketplaceService = game:GetService("MarketplaceService")
+local UserService = game:GetService("UserService")
 
 CoreGui:WaitForChild("RobloxLoadingGui").Enabled = false
 
@@ -110,10 +111,10 @@ if not game:IsLoaded() then
 	game.Loaded:Wait()
 end
 
-local GameInformation = MarketplaceService:GetProductInfo(game.PlaceId)
+local GameInformation = {UserService:GetUserInfosByUserIdsAsync({game.CreatorId})[1].DisplayName, MarketplaceService:GetProductInfo(game.PlaceId).Name}
 
-CreatorName.Text = "By " .. GameInformation.Creator.Name
-PlaceName.Text = GameInformation.Name
+CreatorName.Text = "By " .. GameInformation[1]
+PlaceName.Text = GameInformation[2]
 
 if identifyexecutor():lower():find("krnl") then -- Temporary
 	getgenv().sethiddenproperty = function(obj, prop, value)
