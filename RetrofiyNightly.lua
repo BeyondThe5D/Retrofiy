@@ -68,7 +68,7 @@ CreatorName.BackgroundTransparency = 1
 CreatorName.Position = UDim2.new(0, 0, 0, 80)
 CreatorName.Size = UDim2.new(1, 0, 0, 30)
 CreatorName.Font = Enum.Font.SourceSans
-CreatorName.Text = "By John Doe" 
+CreatorName.Text = ""
 CreatorName.TextColor3 = Color3.fromRGB(255, 255, 255)
 CreatorName.TextScaled = true
 CreatorName.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
@@ -81,7 +81,7 @@ PlaceName.BackgroundTransparency = 1
 PlaceName.Position = UDim2.new(0, 0, 0, 0)
 PlaceName.Size = UDim2.new(1, 0, 0, 80)
 PlaceName.Font = Enum.Font.SourceSans
-PlaceName.Text = MarketplaceService:GetProductInfo(game.PlaceId).Name
+PlaceName.Text = ""
 PlaceName.TextColor3 = Color3.fromRGB(255, 255, 255)
 PlaceName.TextScaled = true
 PlaceName.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
@@ -99,6 +99,7 @@ local Message = Instance.new("TextLabel")
 Message.BackgroundTransparency = 1
 Message.Position = UDim2.new(0.25, 0, 1, -120)
 Message.Size = UDim2.new(0.5, 0, 0, 80)
+Message.Visible = false
 Message.Font = Enum.Font.SourceSansBold
 Message.Text = "Requesting Server..."
 Message.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -108,6 +109,11 @@ Message.Parent = Information
 if not game:IsLoaded() then
 	game.Loaded:Wait()
 end
+
+local GameInformation = MarketplaceService:GetProductInfo(game.PlaceId)
+
+CreatorName.Text = "By " .. GameInformation.Creator.Name
+PlaceName.Text = GameInformation.Name
 
 if identifyexecutor():lower():find("krnl") then -- Temporary
 	getgenv().sethiddenproperty = function(obj, prop, value)
