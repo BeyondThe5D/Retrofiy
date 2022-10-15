@@ -48,7 +48,7 @@ local UserService = game:GetService("UserService")
 CoreGui:WaitForChild("RobloxLoadingGui").Enabled = false
 
 local LoadingScreen = Instance.new("ScreenGui")
-LoadingScreen.DisplayOrder = 2147483647
+LoadingScreen.DisplayOrder = 2147483647 -- maybe lower lol
 LoadingScreen.IgnoreGuiInset = true
 LoadingScreen.Parent = CoreGui
 local Background = Instance.new("ImageLabel")
@@ -106,6 +106,55 @@ Message.Text = "Requesting Server..."
 Message.TextColor3 = Color3.fromRGB(255, 255, 255)
 Message.TextSize = 18
 Message.Parent = Information
+local Loading = Instance.new("Frame")
+Loading.BackgroundTransparency = 1
+Loading.Position = UDim2.new(1, -225, 1, -165)
+Loading.Size = UDim2.new(0, 120, 0, 120)
+Loading.Parent = Information
+local LoadingText = Instance.new("TextLabel")
+LoadingText.BackgroundTransparency = 1
+LoadingText.Position = UDim2.new(0, 28, 0, 0)
+LoadingText.Size = UDim2.new(1, -56, 1, 0)
+LoadingText.Font = Enum.Font.SourceSans
+LoadingText.Text = "Loading..."
+LoadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
+LoadingText.TextSize = 18
+LoadingText.TextWrapped = true
+LoadingText.TextXAlignment = Enum.TextXAlignment.Left
+LoadingText.Parent = Loading
+local LoadingImage = Instance.new("ImageLabel")
+LoadingImage.BackgroundTransparency = 1
+LoadingImage.Size = UDim2.new(1, 0, 1, 0)
+LoadingImage.Image = "rbxasset://textures/loading/loadingCircle.png"
+LoadingImage.Parent = Loading
+
+-- This part of the code was just straight up taken from the 2016 client, it doesn't fully work though for some reason and will be optimised and fixed soon :)
+
+local u1 = nil
+local u2 = nil
+local u3 = "..."
+
+renderSteppedConnection = RunService.RenderStepped:connect(function()
+	if not u1 then
+		u1 = tick()
+		u2 = u1
+		return
+	end
+
+	local v28 = tick()
+	u1 = v28
+
+	LoadingImage.Rotation += (v28 - u1) * 180
+
+	if 0.2 <= v28 - u2 then
+		u2 = v28
+		u3 = u3 .. "."
+		if u3 == "...." then
+			u3 = ""
+		end
+		LoadingText.Text = "Loading" .. u3
+	end
+end)
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -158,7 +207,7 @@ local function DownloadFiles(directory)
 			end
 		end
 	end)
-	
+
 	if Error then
 		local Response = Instance.new("BindableFunction")
 		Response.OnInvoke = function(answer)
@@ -166,7 +215,7 @@ local function DownloadFiles(directory)
 				setclipboard("https://archive.org/details/retrofiy_asset_archive")
 			end
 		end
-		
+
 		StarterGui:SetCore("SendNotification", {
 			Title = "Retrofiy Error!",
 			Text = "Retrofiy couldn't check if you have the most up-to-date assets installed, do you want a download link set to ur clipboard?",
