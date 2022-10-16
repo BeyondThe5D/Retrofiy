@@ -19,7 +19,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/
 ```
 # Discord
 Click [here](https://discord.gg/4rYMxBMQvv) to join our Discord server & meet the community!
-# Credits
+# Contributions
 - [BeyondThe5D](https://github.com/BeyondThe5D) - Main programmer & project leader.
 - [AdolfRoxler](https://github.com/AdolfRoxler) - Helped with memory leaks.
 - [Greenman](https://github.com/greenmancode) - Wrote the auto-downloader for the assets.
