@@ -7,7 +7,7 @@ The end goal for Retrofiy is to be achieve high accuracy, high compatibility and
 # Confirmed working exploits
 - [Synapse X](https://x.synapse.to)
 - [Krnl](https://krnl.place)
-- [Script-Ware](https://script-ware.com) - Recommended for new exploiters!
+- [Script-Ware](https://script-ware.com) (Recommended for new exploiters)
 # Script
 Stable version: (Recommended)
 ```lua
