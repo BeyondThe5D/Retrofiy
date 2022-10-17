@@ -457,6 +457,10 @@ if RetrofiyConfig.RetroCoreGui then
 		end
 		return oldindex(self, k)
 	end))
+	
+	Mouse.Move:Connect(function()
+		FakeMouse.Position = Vector2.new(Mouse.X, Mouse.Y)
+	end)
 
 	local TeamsOrderd = {}
 	local NeutralTeamExists = false
@@ -697,7 +701,6 @@ if RetrofiyConfig.RetroCoreGui then
 		HealthBar.Visible = HealthVisibility
 		Username.Visible = HealthVisibility or PlayerlistVisibility
 		Username.Position = HealthBarNamePosition[HealthVisibility]
-		FakeMouse.Position = Vector2.new(Mouse.X, Mouse.Y)
 		FakeMouse.Visible = UserInputService.MouseIconEnabled
 	end)
 end
