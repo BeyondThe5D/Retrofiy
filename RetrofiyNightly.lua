@@ -138,6 +138,45 @@ LoadingImage.Size = UDim2.new(1, 0, 1, 0)
 LoadingImage.Image = "rbxasset://textures/loading/loadingCircle.png"
 LoadingImage.Parent = Loading
 
+-- This part of the code was just straight up taken from the 2016 client, it doesn't fully work though for some reason and will be optimised and fixed soon :)
+
+local u1 = nil
+local u2 = nil
+local u3 = "..."
+
+renderSteppedConnection = RunService.RenderStepped:connect(function()
+	if not u1 then
+		u1 = tick()
+		u2 = u1
+		return
+	end
+
+	local v28 = tick()
+	u1 = v28
+
+	LoadingImage.Rotation += (v28 - u1) * 180
+
+	if 0.2 <= v28 - u2 then
+		u2 = v28
+		u3 = u3 .. "."
+		if u3 == "...." then
+			u3 = ""
+		end
+		LoadingText.Text = "Loading" .. u3
+	end
+end)
+
+if not game:IsLoaded() then
+	game.Loaded:Wait()
+end
+
+Message:Destroy()
+
+local GameInformation = {UserService:GetUserInfosByUserIdsAsync({game.CreatorId})[1].DisplayName, MarketplaceService:GetProductInfo(game.PlaceId).Name}
+
+CreatorName.Text = "By " .. GameInformation[1]
+PlaceName.Text = GameInformation[2]
+
 local function Connect(...)
 	return table.concat({...}, "/")
 end
@@ -179,40 +218,6 @@ end
 makefolder("Retrofiy")
 makefolder("Retrofiy\\Patches")
 DownloadFiles("Retrofiy")
-
--- This part of the code was just straight up taken from the 2016 client, it doesn't fully work though for some reason and will be optimised and fixed soon :)
-
-local u1 = nil
-local u2 = nil
-local u3 = "..."
-
-renderSteppedConnection = RunService.RenderStepped:connect(function()
-	if not u1 then
-		u1 = tick()
-		u2 = u1
-		return
-	end
-
-	local v28 = tick()
-	u1 = v28
-
-	LoadingImage.Rotation += (v28 - u1) * 180
-
-	if 0.2 <= v28 - u2 then
-		u2 = v28
-		u3 = u3 .. "."
-		if u3 == "...." then
-			u3 = ""
-		end
-		LoadingText.Text = "Loading" .. u3
-	end
-end)
-
-if not game:IsLoaded() then
-	game.Loaded:Wait()
-end
-
-Message:Destroy()
 
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
@@ -276,11 +281,6 @@ end)
 RunService.RenderStepped:Connect(function()
 	FakeMouse.Visible = UserInputService.MouseIconEnabled
 end)
-
-local GameInformation = {UserService:GetUserInfosByUserIdsAsync({game.CreatorId})[1].DisplayName, MarketplaceService:GetProductInfo(game.PlaceId).Name}
-
-CreatorName.Text = "By " .. GameInformation[1]
-PlaceName.Text = GameInformation[2]
 
 local OriginalChat
 
