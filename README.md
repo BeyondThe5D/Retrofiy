@@ -1,4 +1,5 @@
-[![Discord Server](https://img.shields.io/discord/309643527816609793?color=%235CA8FA&label=Retrofiy%20Discord&logo=discord&logoColor=white)](https://discord.gg/4rYMxBMQvv)
+[![Discord Server](https://img.shields.io/discord/975209625605537853?color=5865F2&label=Discord%20Server&logo=discord&logoColor=white&style=plastic)](https://discord.gg/4rYMxBMQvv)
+[![YouTube Tutorials](https://img.shields.io/youtube/channel/subscribers/UCtJsEU-3ejTmvL7nraAXSLQ?color=FF0000&label=YouTube%20Tutorials&logo=youtube&style=plastic)](https://www.youtube.com/channel/UCtJsEU-3ejTmvL7nraAXSLQ)
 ![# RETROFIY](https://cdn.discordapp.com/attachments/947197644076351591/1010407584198565948/Title.png)
 
 # What is Retrofiy?
