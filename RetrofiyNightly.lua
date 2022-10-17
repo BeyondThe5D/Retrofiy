@@ -138,6 +138,48 @@ LoadingImage.Size = UDim2.new(1, 0, 1, 0)
 LoadingImage.Image = "rbxasset://textures/loading/loadingCircle.png"
 LoadingImage.Parent = Loading
 
+local function Connect(...)
+	return table.concat({...}, "/")
+end
+
+local function DownloadFiles(directory)
+	local _, Error = pcall(function()
+		for _, item in pairs(HttpService:JSONDecode(game:HttpGet(Connect("https://api.github.com/repos/BeyondThe5D/Retrofiy/contents", directory)))) do
+			local NewPath = Connect(directory, item["name"])
+
+			if item["type"] == "dir" then
+				makefolder(NewPath)
+				DownloadFiles(NewPath)
+			elseif item["type"] == "file" and not isfile(NewPath) then
+				writefile(NewPath, game:HttpGet(item["download_url"]))
+			end
+		end
+	end)
+
+	if Error then
+		local Response = Instance.new("BindableFunction")
+		Response.OnInvoke = function(answer)
+			if answer == "Yes" then
+				setclipboard("https://archive.org/details/retrofiy_asset_archive")
+			end
+			Response:Destroy()
+		end
+
+		StarterGui:SetCore("SendNotification", {
+			Title = "Retrofiy Error!",
+			Text = "Retrofiy couldn't check if you have the most up-to-date assets installed, do you want a download link set to ur clipboard?",
+			Duration = math.huge,
+			Button1 = "Yes",
+			Button2 = "No",
+			Callback = Response
+		})
+	end
+end
+
+makefolder("Retrofiy")
+makefolder("Retrofiy\\Patches")
+DownloadFiles("Retrofiy")
+
 -- This part of the code was just straight up taken from the 2016 client, it doesn't fully work though for some reason and will be optimised and fixed soon :)
 
 local u1 = nil
@@ -248,48 +290,6 @@ local function ImprovedKeyPress(keys)
 		keyrelease(key)
 	end
 end
-
-local function Connect(...)
-	return table.concat({...}, "/")
-end
-
-local function DownloadFiles(directory)
-	local _, Error = pcall(function()
-		for _, item in pairs(HttpService:JSONDecode(game:HttpGet(Connect("https://api.github.com/repos/BeyondThe5D/Retrofiy/contents", directory)))) do
-			local NewPath = Connect(directory, item["name"])
-
-			if item["type"] == "dir" then
-				makefolder(NewPath)
-				DownloadFiles(NewPath)
-			elseif item["type"] == "file" and not isfile(NewPath) then
-				writefile(NewPath, game:HttpGet(item["download_url"]))
-			end
-		end
-	end)
-
-	if Error then
-		local Response = Instance.new("BindableFunction")
-		Response.OnInvoke = function(answer)
-			if answer == "Yes" then
-				setclipboard("https://archive.org/details/retrofiy_asset_archive")
-			end
-			Response:Destroy()
-		end
-
-		StarterGui:SetCore("SendNotification", {
-			Title = "Retrofiy Error!",
-			Text = "Retrofiy couldn't check if you have the most up-to-date assets installed, do you want a download link set to ur clipboard?",
-			Duration = math.huge,
-			Button1 = "Yes",
-			Button2 = "No",
-			Callback = Response
-		})
-	end
-end
-
-makefolder("Retrofiy")
-makefolder("Retrofiy\\Patches")
-DownloadFiles("Retrofiy")
 
 if RetrofiyConfig.RetroLighting then
 	local RestrictedLighting = {
