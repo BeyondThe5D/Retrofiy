@@ -359,10 +359,6 @@ if RetrofiyConfig.RetroCoreGui then
 	KickMessage.TextColor3 = Color3.fromRGB(255, 255, 255)
 	KickMessage.TextSize = 14
 	KickMessage.Parent = RetroGui
-	local FakeMouse = Drawing.new("Image")
-	FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
-	FakeMouse.Size = Vector2.new(64, 64)
-	FakeMouse.Visible = UserInputService.MouseIconEnabled
 	
 	local function CreateIcon(size, image)
 		local Button = Instance.new("ImageButton")
@@ -437,7 +433,29 @@ if RetrofiyConfig.RetroCoreGui then
 		end
 	end)
 	
+	local FakeMouse = Drawing.new("Image")
+	FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
+	FakeMouse.Size = Vector2.new(64, 64)
+	FakeMouse.Visible = UserInputService.MouseIconEnabled
+	
 	local VirtualMouseIconEnabled = UserInputService.MouseIconEnabled
+	
+	local ButtonClasses = {
+		"TextButton",
+		"ImageButton"
+	}
+	
+	local function ApplyMouseHover(button)
+		if table.find(ButtonClasses, button.ClassName) then
+			button.MouseEnter:Connect(function()
+				FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowCursor.png")
+			end)
+
+			button.MouseLeave:Connect(function()
+				FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
+			end)
+		end
+	end
 	
 	UserInputService.MouseIconEnabled = false
 	
@@ -459,9 +477,17 @@ if RetrofiyConfig.RetroCoreGui then
 	end))
 	
 	Mouse.Move:Connect(function()
-		FakeMouse.Position = Vector2.new(Mouse.X, Mouse.Y)
+		FakeMouse.Position = Vector2.new(Mouse.X - 32, Mouse.Y)
 	end)
-
+	
+	for _, buttons in pairs(game:GetDescendants()) do
+		ApplyMouseHover(buttons)
+	end
+	
+	game.DescendantAdded:Connect(function(button)
+		ApplyMouseHover(button)
+	end)
+	
 	local TeamsOrderd = {}
 	local NeutralTeamExists = false
 	local Number = 0
