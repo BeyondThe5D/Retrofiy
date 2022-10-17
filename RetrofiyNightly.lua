@@ -358,6 +358,12 @@ if RetrofiyConfig.RetroCoreGui then
 	KickMessage.TextColor3 = Color3.fromRGB(255, 255, 255)
 	KickMessage.TextSize = 14
 	KickMessage.Parent = RetroGui
+	local FakeMouse = Instance.new("ImageLabel")
+	FakeMouse.AnchorPoint = Vector2.new(0.5, 0)
+	FakeMouse.BackgroundTransparency = 1
+	FakeMouse.Size = UDim2.new(0, 64, 0, 64)
+	FakeMouse.Image = GetAsset("Retrofiy/Assets/Textures/ArrowFarCursor.png")
+	FakeMouse.Parent = RetroGui
 
 	local function CreateIcon(size, image)
 		local Button = Instance.new("ImageButton")
@@ -430,6 +436,10 @@ if RetrofiyConfig.RetroCoreGui then
 		if input.KeyCode == Enum.KeyCode.Tab then
 			TogglePlayerlist()
 		end
+	end)
+
+	Mouse.Move:Connect(function()
+		FakeMouse.Position = UDim2.new(0, Mouse.X, 0, Mouse.Y)
 	end)
 
 	local TeamsOrderd = {}
@@ -671,6 +681,7 @@ if RetrofiyConfig.RetroCoreGui then
 		HealthBar.Visible = HealthVisibility
 		Username.Visible = HealthVisibility or PlayerlistVisibility
 		Username.Position = HealthBarNamePosition[HealthVisibility]
+		FakeMouse.Visible = UserInputService.MouseIconEnabled
 	end)
 end
 
