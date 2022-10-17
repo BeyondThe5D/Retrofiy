@@ -1,9 +1,7 @@
 ![# RETROFIY](https://cdn.discordapp.com/attachments/947197644076351591/1010407584198565948/Title.png)
 
 # What is Retrofiy?
-Retrofiy aims to accurately convert any Roblox game that the script is executed in to a late 2016 Roblox client, the exact client that is being simulated is a old client I found on my old computer which was apparently last updated on the 10th of December 2016.
-
-The end goal for Retrofiy is to be achieve high accuracy, high compatibility and be future-proofed so whenever the project gets discontinued, the code should hopefully still run fine years down the line!
+Retrofiy aims to accurately convert any Roblox game that the script is executed in to a late 2016 Roblox client, the exact client that is being simulated is a client from the 10th of December 2016.
 # Evaulation criteria (In order of importance)
 1. **Survivability** - We strictly try avoid using HTTP services unless necessary and when it is used it's usually to download assets, theses assets can also be downloaded from an archive [here](https://archive.org/details/retrofiy_asset_archive).
 2. **Accuracy** - We try to make this script almost 1:1 with a original 2016 Roblox client, we do tons of research and double check that research ourselves to ensure you are getting the most accurate experience possible.
