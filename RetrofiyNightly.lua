@@ -111,7 +111,6 @@ local Message = Instance.new("TextLabel")
 Message.BackgroundTransparency = 1
 Message.Position = UDim2.new(0.25, 0, 1, -120)
 Message.Size = UDim2.new(0.5, 0, 0, 80)
-Message.Visible = false
 Message.Font = Enum.Font.SourceSansBold
 Message.Text = "Requesting Server..."
 Message.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -170,6 +169,8 @@ end)
 if not game:IsLoaded() then
 	game.Loaded:Wait()
 end
+
+Message:Destroy()
 
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
