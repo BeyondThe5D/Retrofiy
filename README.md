@@ -5,7 +5,7 @@ Retrofiy aims to accurately convert any Roblox game that the script is executed 
 
 The end goal for Retrofiy is to be achieve high accuracy, high compatibility and be future-proofed so whenever the project gets discontinued, the code should hopefully still run fine years down the line!
 # Evaulation criteria (In order of importance)
-1. **Survivability** - We strictly try avoid using HTTP services unless necessary and when they are used it's usually to download assets, theses assets can also be downloaded from an archive.
+1. **Survivability** - We strictly try avoid using HTTP services unless necessary and when it is used it's usually to download assets, theses assets can also be downloaded from an archive.
 2. **Accuracy** - We try to make this script almost 1:1 with a original 2016 Roblox client, we do tons of research and double check that research ourselves to ensure you are getting the most accurate experience possible.
 3. **Performance** - Making the script runs at a reasonable speed even on low-end hardware.
 4. **Compatibility** - Making sure all exploits can support this script.
