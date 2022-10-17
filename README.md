@@ -1,3 +1,4 @@
+[![Discord Server](https://img.shields.io/discord/309643527816609793?color=%235CA8FA&label=Retrofiy%20Discord&logo=discord&logoColor=white)](https://discord.gg/4rYMxBMQvv)
 ![# RETROFIY](https://cdn.discordapp.com/attachments/947197644076351591/1010407584198565948/Title.png)
 
 # What is Retrofiy?
@@ -20,8 +21,6 @@ Nightly version:
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/RetrofiyNightly.lua"))()
 ```
-# Discord
-Click [here](https://discord.gg/4rYMxBMQvv) to join our Discord server & meet the community!
 # Contributions
 - [Beyond 5D](https://github.com/BeyondThe5D) - Main programmer & project leader.
 - [AdolfRoxler](https://github.com/AdolfRoxler) - Helped with memory leaks.
