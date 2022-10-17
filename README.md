@@ -23,4 +23,4 @@ Click [here](https://discord.gg/4rYMxBMQvv) to join our Discord server & meet th
 - [Beyond 5D](https://github.com/BeyondThe5D) - Main programmer & project leader.
 - [AdolfRoxler](https://github.com/AdolfRoxler) - Helped with memory leaks.
 - [Greenman](https://github.com/greenmancode) - Wrote the auto-downloader for the assets.
-- [Economy Simulator](https://economy-simulator.com) - Online 2016 client revival, used to test features & functionality that didn't work on offline clients.
+- [Economy Simulator](https://economy-simulator.com) - Online 2016 client revival, used to test features & functionality that don't work on offline clients.
