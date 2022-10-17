@@ -214,12 +214,13 @@ local function DownloadFiles(directory)
 			if answer == "Yes" then
 				setclipboard("https://archive.org/details/retrofiy_asset_archive")
 			end
+			Response:Destroy()
 		end
 
 		StarterGui:SetCore("SendNotification", {
 			Title = "Retrofiy Error!",
 			Text = "Retrofiy couldn't check if you have the most up-to-date assets installed, do you want a download link set to ur clipboard?",
-			Duration = 60,
+			Duration = math.huge,
 			Button1 = "Yes",
 			Button2 = "No",
 			Callback = Response
@@ -358,13 +359,11 @@ if RetrofiyConfig.RetroCoreGui then
 	KickMessage.TextColor3 = Color3.fromRGB(255, 255, 255)
 	KickMessage.TextSize = 14
 	KickMessage.Parent = RetroGui
-	local FakeMouse = Instance.new("ImageLabel")
-	FakeMouse.AnchorPoint = Vector2.new(0.5, 0)
-	FakeMouse.BackgroundTransparency = 1
-	FakeMouse.Size = UDim2.new(0, 64, 0, 64)
-	FakeMouse.Image = GetAsset("Retrofiy/Assets/Textures/ArrowFarCursor.png")
-	FakeMouse.Parent = RetroGui
-
+	local FakeMouse = Drawing.new("Image")
+	FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
+	FakeMouse.Size = Vector2.new(64, 64)
+	FakeMouse.Visible = UserInputService.MouseIconEnabled
+	
 	local function CreateIcon(size, image)
 		local Button = Instance.new("ImageButton")
 		Button.BackgroundTransparency = 1
@@ -437,10 +436,27 @@ if RetrofiyConfig.RetroCoreGui then
 			TogglePlayerlist()
 		end
 	end)
+	
+	local VirtualMouseIconEnabled = UserInputService.MouseIconEnabled
+	
+	UserInputService.MouseIconEnabled = false
+	
+	local oldnewindex
+	oldnewindex = hookmetamethod(game, "__newindex", newcclosure(function(self, k, v)
+		if self == UserInputService and k == "MouseIconEnabled" then
+			VirtualMouseIconEnabled = v
+			return
+		end
+		return oldnewindex(self, k, v)
+	end))
 
-	Mouse.Move:Connect(function()
-		FakeMouse.Position = UDim2.new(0, Mouse.X, 0, Mouse.Y)
-	end)
+	local oldindex
+	oldindex = hookmetamethod(game, "__index", newcclosure(function(self, k)
+		if self == UserInputService and k == "MouseIconEnabled" then
+			return VirtualMouseIconEnabled
+		end
+		return oldindex(self, k)
+	end))
 
 	local TeamsOrderd = {}
 	local NeutralTeamExists = false
@@ -681,6 +697,7 @@ if RetrofiyConfig.RetroCoreGui then
 		HealthBar.Visible = HealthVisibility
 		Username.Visible = HealthVisibility or PlayerlistVisibility
 		Username.Position = HealthBarNamePosition[HealthVisibility]
+		FakeMouse.Position = Vector2.new(Mouse.X, Mouse.Y)
 		FakeMouse.Visible = UserInputService.MouseIconEnabled
 	end)
 end
