@@ -45,6 +45,17 @@ local HttpService = game:GetService("HttpService")
 local MarketplaceService = game:GetService("MarketplaceService")
 local UserService = game:GetService("UserService")
 
+if identifyexecutor():lower():find("krnl") then -- Temporary
+	getgenv().sethiddenproperty = function(obj, prop, value)
+		setscriptable(obj, prop, true)
+		obj[prop] = value
+	end
+end
+
+local MaxInteger = 2147483647
+
+local GetAsset = getsynasset or getcustomasset
+
 CoreGui:WaitForChild("RobloxLoadingGui").Enabled = false
 
 local LoadingScreen = Instance.new("ScreenGui")
@@ -160,26 +171,68 @@ if not game:IsLoaded() then
 	game.Loaded:Wait()
 end
 
+local Player = Players.LocalPlayer
+local Mouse = Player:GetMouse()
+
+local FakeMouse = Drawing.new("Image")
+FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
+FakeMouse.Position = Vector2.new(Mouse.X - 32, Mouse.Y)
+FakeMouse.Size = Vector2.new(64, 64)
+FakeMouse.Visible = UserInputService.MouseIconEnabled
+
+RunService.RenderStepped:Connect(function()
+	FakeMouse.Visible = UserInputService.MouseIconEnabled
+end)
+
+local VirtualMouseIconEnabled = UserInputService.MouseIconEnabled
+
+local function ApplyMouseHover(button)
+	if button:IsA("GuiObject") and button.Active then
+		button.MouseEnter:Connect(function()
+			FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowCursor.png")
+		end)
+
+		button.MouseLeave:Connect(function()
+			FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
+		end)
+	end
+end
+
+UserInputService.MouseIconEnabled = false
+
+local OldNewIndex
+OldNewIndex = hookmetamethod(game, "__newindex", newcclosure(function(self, property, value)
+	if self == UserInputService and property == "MouseIconEnabled" then
+		VirtualMouseIconEnabled = value
+		return
+	end
+	return OldNewIndex(self, property, value)
+end))
+
+local OldIndex
+OldIndex = hookmetamethod(game, "__index", newcclosure(function(self, property)
+	if self == UserInputService and property == "MouseIconEnabled" then
+		return VirtualMouseIconEnabled
+	end
+	return oldindex(self, property)
+end))
+
+Mouse.Move:Connect(function()
+	FakeMouse.Position = Vector2.new(Mouse.X - 32, Mouse.Y)
+end)
+
+for _, buttons in pairs(game:GetDescendants()) do
+	ApplyMouseHover(buttons)
+end
+
+game.DescendantAdded:Connect(function(button)
+	ApplyMouseHover(button)
+end)
+
 local GameInformation = {UserService:GetUserInfosByUserIdsAsync({game.CreatorId})[1].DisplayName, MarketplaceService:GetProductInfo(game.PlaceId).Name}
 
 CreatorName.Text = "By " .. GameInformation[1]
 PlaceName.Text = GameInformation[2]
-
-if identifyexecutor():lower():find("krnl") then -- Temporary
-	getgenv().sethiddenproperty = function(obj, prop, value)
-		setscriptable(obj, prop, true)
-		obj[prop] = value
-	end
-end
-
-local Player = Players.LocalPlayer
-local Mouse = Player:GetMouse()
-local Character = Player.Character or Player.CharacterAdded:Wait()
-local Humanoid = Character:WaitForChild("Humanoid")
-
-local MaxInteger = 2147483647
-
-local GetAsset = getsynasset or getcustomasset
 
 local OriginalChat
 
@@ -294,6 +347,7 @@ if RetrofiyConfig.RetroCoreGui then
 	CoreGui.PlayerList.Enabled = false
 
 	local Topbar = Instance.new("Frame")
+	Topbar.Active = true
 	Topbar.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
 	Topbar.BackgroundTransparency = Player.PlayerGui:GetTopbarTransparency()
 	Topbar.BorderSizePixel = 0
@@ -359,7 +413,7 @@ if RetrofiyConfig.RetroCoreGui then
 	KickMessage.TextColor3 = Color3.fromRGB(255, 255, 255)
 	KickMessage.TextSize = 14
 	KickMessage.Parent = RetroGui
-	
+
 	local function CreateIcon(size, image)
 		local Button = Instance.new("ImageButton")
 		Button.BackgroundTransparency = 1
@@ -421,7 +475,7 @@ if RetrofiyConfig.RetroCoreGui then
 		TogglePlayerlist()
 	end)
 
-	AttachHumanoidToHealthBar(Humanoid)
+	AttachHumanoidToHealthBar(Player.Character:WaitForChild("Humanoid"))
 
 	Player.CharacterAdded:Connect(function(character)
 		AttachHumanoidToHealthBar(character:WaitForChild("Humanoid"))
@@ -432,62 +486,7 @@ if RetrofiyConfig.RetroCoreGui then
 			TogglePlayerlist()
 		end
 	end)
-	
-	local FakeMouse = Drawing.new("Image")
-	FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
-	FakeMouse.Size = Vector2.new(64, 64)
-	FakeMouse.Visible = UserInputService.MouseIconEnabled
-	
-	local VirtualMouseIconEnabled = UserInputService.MouseIconEnabled
-	
-	local ButtonClasses = {
-		"TextButton",
-		"ImageButton"
-	}
-	
-	local function ApplyMouseHover(button)
-		if table.find(ButtonClasses, button.ClassName) then
-			button.MouseEnter:Connect(function()
-				FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowCursor.png")
-			end)
 
-			button.MouseLeave:Connect(function()
-				FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
-			end)
-		end
-	end
-	
-	UserInputService.MouseIconEnabled = false
-	
-	local oldnewindex
-	oldnewindex = hookmetamethod(game, "__newindex", newcclosure(function(self, k, v)
-		if self == UserInputService and k == "MouseIconEnabled" then
-			VirtualMouseIconEnabled = v
-			return
-		end
-		return oldnewindex(self, k, v)
-	end))
-
-	local oldindex
-	oldindex = hookmetamethod(game, "__index", newcclosure(function(self, k)
-		if self == UserInputService and k == "MouseIconEnabled" then
-			return VirtualMouseIconEnabled
-		end
-		return oldindex(self, k)
-	end))
-	
-	Mouse.Move:Connect(function()
-		FakeMouse.Position = Vector2.new(Mouse.X - 32, Mouse.Y)
-	end)
-	
-	for _, buttons in pairs(game:GetDescendants()) do
-		ApplyMouseHover(buttons)
-	end
-	
-	game.DescendantAdded:Connect(function(button)
-		ApplyMouseHover(button)
-	end)
-	
 	local TeamsOrderd = {}
 	local NeutralTeamExists = false
 	local Number = 0
@@ -727,7 +726,6 @@ if RetrofiyConfig.RetroCoreGui then
 		HealthBar.Visible = HealthVisibility
 		Username.Visible = HealthVisibility or PlayerlistVisibility
 		Username.Position = HealthBarNamePosition[HealthVisibility]
-		FakeMouse.Visible = UserInputService.MouseIconEnabled
 	end)
 end
 
