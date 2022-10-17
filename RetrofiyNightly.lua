@@ -180,10 +180,7 @@ FakeMouse.Position = Vector2.new(Mouse.X - 32, Mouse.Y)
 FakeMouse.Size = Vector2.new(64, 64)
 FakeMouse.Visible = UserInputService.MouseIconEnabled
 
-RunService.RenderStepped:Connect(function()
-	FakeMouse.Visible = UserInputService.MouseIconEnabled
-end)
-
+local MouseDebounce = false
 local VirtualMouseIconEnabled = UserInputService.MouseIconEnabled
 
 local function ApplyMouseHover(button)
@@ -221,12 +218,20 @@ Mouse.Move:Connect(function()
 	FakeMouse.Position = Vector2.new(Mouse.X - 32, Mouse.Y)
 end)
 
+Mouse:GetPropertyChangedSignal("Icon"):Connect(function() --Fix this later
+	-- game:HttpGet("https://tr.rbxcdn.com/763effda4df034818c15f23e27126a24/420/420/Image/Png")
+end)
+
 for _, buttons in pairs(game:GetDescendants()) do
 	ApplyMouseHover(buttons)
 end
 
 game.DescendantAdded:Connect(function(button)
 	ApplyMouseHover(button)
+end)
+
+RunService.RenderStepped:Connect(function()
+	FakeMouse.Visible = UserInputService.MouseIconEnabled
 end)
 
 local GameInformation = {UserService:GetUserInfosByUserIdsAsync({game.CreatorId})[1].DisplayName, MarketplaceService:GetProductInfo(game.PlaceId).Name}
