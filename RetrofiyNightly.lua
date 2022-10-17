@@ -214,7 +214,7 @@ OldIndex = hookmetamethod(game, "__index", newcclosure(function(self, property)
 	if self == UserInputService and property == "MouseIconEnabled" then
 		return VirtualMouseIconEnabled
 	end
-	return oldindex(self, property)
+	return OldIndex(self, property)
 end))
 
 Mouse.Move:Connect(function()
