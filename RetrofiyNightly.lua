@@ -45,6 +45,19 @@ local HttpService = game:GetService("HttpService")
 local MarketplaceService = game:GetService("MarketplaceService")
 local UserService = game:GetService("UserService")
 
+local GetAsset = getsynasset or getcustomasset
+local MaxInteger = {
+	[true] = 2147483647,
+	[false] = -2147483648
+}
+
+local function ImprovedKeyPress(keys)
+	for _, key in pairs(keys) do
+		keypress(key)
+		keyrelease(key)
+	end
+end
+
 if identifyexecutor():lower():find("krnl") then -- Temporary
 	getgenv().sethiddenproperty = function(obj, prop, value)
 		setscriptable(obj, prop, true)
@@ -52,14 +65,10 @@ if identifyexecutor():lower():find("krnl") then -- Temporary
 	end
 end
 
-local MaxInteger = 2147483647
-
-local GetAsset = getsynasset or getcustomasset
-
 CoreGui:WaitForChild("RobloxLoadingGui").Enabled = false
 
 local LoadingScreen = Instance.new("ScreenGui")
-LoadingScreen.DisplayOrder = 2147483647 -- maybe lower lol
+LoadingScreen.DisplayOrder = MaxInteger[true] -- maybe lower lol
 LoadingScreen.IgnoreGuiInset = true
 LoadingScreen.Parent = CoreGui
 local Background = Instance.new("ImageLabel")
@@ -172,6 +181,9 @@ end
 
 Message:Destroy()
 
+local Player = Players.LocalPlayer
+local Mouse = Player:GetMouse()
+
 local GameInformation = {UserService:GetUserInfosByUserIdsAsync({game.CreatorId})[1].DisplayName, MarketplaceService:GetProductInfo(game.PlaceId).Name}
 
 CreatorName.Text = "By " .. GameInformation[1]
@@ -219,16 +231,6 @@ makefolder("Retrofiy")
 makefolder("Retrofiy\\Patches")
 DownloadFiles("Retrofiy")
 
-local Player = Players.LocalPlayer
-local Mouse = Player:GetMouse()
-
-local FakeMouse = Drawing.new("Image")
-FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
-FakeMouse.Position = Vector2.new(Mouse.X - 32, Mouse.Y)
-FakeMouse.Size = Vector2.new(64, 64)
-FakeMouse.Visible = UserInputService.MouseIconEnabled
-
-local MouseDebounce = false
 local VirtualMouseIconEnabled = UserInputService.MouseIconEnabled
 
 local function ApplyMouseHover(button)
@@ -242,6 +244,12 @@ local function ApplyMouseHover(button)
 		end)
 	end
 end
+
+local FakeMouse = Drawing.new("Image")
+FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
+FakeMouse.Position = Vector2.new(Mouse.X - 32, Mouse.Y)
+FakeMouse.Size = Vector2.new(64, 64)
+FakeMouse.Visible = UserInputService.MouseIconEnabled
 
 UserInputService.MouseIconEnabled = false
 
@@ -278,18 +286,9 @@ game.DescendantAdded:Connect(function(button)
 	ApplyMouseHover(button)
 end)
 
-RunService.RenderStepped:Connect(function()
+UserInputService.Changed:Connect(function()
 	FakeMouse.Visible = UserInputService.MouseIconEnabled
 end)
-
-local OriginalChat
-
-local function ImprovedKeyPress(keys)
-	for _, key in pairs(keys) do
-		keypress(key)
-		keyrelease(key)
-	end
-end
 
 if RetrofiyConfig.RetroLighting then
 	local RestrictedLighting = {
@@ -329,6 +328,8 @@ if RetrofiyConfig.RetroLighting then
 		end
 	end)
 end
+
+local OriginalChat
 
 if RetrofiyConfig.RetroCoreGui then
 	local RetroGui = Instance.new("ScreenGui")
@@ -584,8 +585,8 @@ if RetrofiyConfig.RetroCoreGui then
 				if player.Team then
 					Button.LayoutOrder = TeamsOrderd[player.Team.Name]
 				else
-					AddTeamToPlayerlist("Neutral", Color3.fromRGB(255, 255, 255), MaxInteger, true)
-					Button.LayoutOrder = MaxInteger
+					AddTeamToPlayerlist("Neutral", Color3.fromRGB(255, 255, 255), MaxInteger[true], true)
+					Button.LayoutOrder = MaxInteger[true]
 				end
 			end
 		end
@@ -759,7 +760,7 @@ if RetrofiyConfig.RetroWorkspace then
 				Studs.Color3 = Color3.new(Studs.Color3.R * 2, Studs.Color3.G * 2, Studs.Color3.B * 2)
 				Studs.Texture = GetAsset("Retrofiy/Assets/Textures/Studs.png")
 				Studs.Transparency = basepart.Transparency
-				Studs.ZIndex = -2147483648
+				Studs.ZIndex = MaxInteger[false]
 				Studs.Face = _Faces[face]
 				Studs.Parent = basepart
 
