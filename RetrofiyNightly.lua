@@ -233,18 +233,6 @@ DownloadFiles("Retrofiy")
 
 local VirtualMouseIconEnabled = UserInputService.MouseIconEnabled
 
-local function ApplyMouseHover(button)
-	if button:IsA("GuiObject") and button.Active then
-		button.MouseEnter:Connect(function()
-			FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowCursor.png")
-		end)
-
-		button.MouseLeave:Connect(function()
-			FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
-		end)
-	end
-end
-
 local FakeMouse = Drawing.new("Image")
 FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
 FakeMouse.Position = Vector2.new(Mouse.X - 32, Mouse.Y)
@@ -277,6 +265,18 @@ end)
 Mouse:GetPropertyChangedSignal("Icon"):Connect(function() --Fix this later
 	-- game:HttpGet("https://tr.rbxcdn.com/763effda4df034818c15f23e27126a24/420/420/Image/Png")
 end)
+
+local function ApplyMouseHover(button)
+	if button:IsA("GuiObject") and button.Active then
+		button.MouseEnter:Connect(function()
+			FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowCursor.png")
+		end)
+
+		button.MouseLeave:Connect(function()
+			FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
+		end)
+	end
+end
 
 for _, buttons in pairs(game:GetDescendants()) do
 	ApplyMouseHover(buttons)
