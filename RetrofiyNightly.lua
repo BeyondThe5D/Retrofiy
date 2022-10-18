@@ -175,71 +175,28 @@ renderSteppedConnection = RunService.RenderStepped:connect(function()
 	end
 end)
 
+local VirtualMouseIconEnabled = UserInputService.MouseIconEnabled
+UserInputService.MouseIconEnabled = false
+
 if not game:IsLoaded() then
 	game.Loaded:Wait()
 end
 
 Message:Destroy()
 
-local Player = Players.LocalPlayer
-local Mouse = Player:GetMouse()
-
 local GameInformation = {UserService:GetUserInfosByUserIdsAsync({game.CreatorId})[1].DisplayName, MarketplaceService:GetProductInfo(game.PlaceId).Name}
 
 CreatorName.Text = "By " .. GameInformation[1]
 PlaceName.Text = GameInformation[2]
 
-local function Connect(...)
-	return table.concat({...}, "/")
-end
-
-local function DownloadFiles(directory)
-	local _, Error = pcall(function()
-		for _, item in pairs(HttpService:JSONDecode(game:HttpGet(Connect("https://api.github.com/repos/BeyondThe5D/Retrofiy/contents", directory)))) do
-			local NewPath = Connect(directory, item["name"])
-
-			if item["type"] == "dir" then
-				makefolder(NewPath)
-				DownloadFiles(NewPath)
-			elseif item["type"] == "file" and not isfile(NewPath) then
-				writefile(NewPath, game:HttpGet(item["download_url"]))
-			end
-		end
-	end)
-
-	if Error then
-		local Response = Instance.new("BindableFunction")
-		Response.OnInvoke = function(answer)
-			if answer == "Yes" then
-				setclipboard("https://archive.org/details/retrofiy_asset_archive")
-			end
-			Response:Destroy()
-		end
-
-		StarterGui:SetCore("SendNotification", {
-			Title = "Retrofiy Error!",
-			Text = "Retrofiy couldn't check if you have the most up-to-date assets installed, do you want a download link set to ur clipboard?",
-			Duration = math.huge,
-			Button1 = "Yes",
-			Button2 = "No",
-			Callback = Response
-		})
-	end
-end
-
-makefolder("Retrofiy")
-makefolder("Retrofiy\\Patches")
-DownloadFiles("Retrofiy")
-
-local VirtualMouseIconEnabled = UserInputService.MouseIconEnabled
+local Player = Players.LocalPlayer
+local Mouse = Player:GetMouse()
 
 local FakeMouse = Drawing.new("Image")
 FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
 FakeMouse.Position = Vector2.new(Mouse.X - 32, Mouse.Y)
 FakeMouse.Size = Vector2.new(64, 64)
-FakeMouse.Visible = UserInputService.MouseIconEnabled
-
-UserInputService.MouseIconEnabled = false
+FakeMouse.Visible = VirtualMouseIconEnabled
 
 local OldNewIndex
 OldNewIndex = hookmetamethod(game, "__newindex", newcclosure(function(self, property, value)
@@ -289,6 +246,48 @@ end)
 UserInputService.Changed:Connect(function()
 	FakeMouse.Visible = UserInputService.MouseIconEnabled
 end)
+
+local function Connect(...)
+	return table.concat({...}, "/")
+end
+
+local function DownloadFiles(directory)
+	local _, Error = pcall(function()
+		for _, item in pairs(HttpService:JSONDecode(game:HttpGet(Connect("https://api.github.com/repos/BeyondThe5D/Retrofiy/contents", directory)))) do
+			local NewPath = Connect(directory, item["name"])
+
+			if item["type"] == "dir" then
+				makefolder(NewPath)
+				DownloadFiles(NewPath)
+			elseif item["type"] == "file" and not isfile(NewPath) then
+				writefile(NewPath, game:HttpGet(item["download_url"]))
+			end
+		end
+	end)
+
+	if Error then
+		local Response = Instance.new("BindableFunction")
+		Response.OnInvoke = function(answer)
+			if answer == "Yes" then
+				setclipboard("https://archive.org/details/retrofiy_asset_archive")
+			end
+			Response:Destroy()
+		end
+
+		StarterGui:SetCore("SendNotification", {
+			Title = "Retrofiy Error!",
+			Text = "Retrofiy couldn't check if you have the most up-to-date assets installed, do you want a download link set to ur clipboard?",
+			Duration = math.huge,
+			Button1 = "Yes",
+			Button2 = "No",
+			Callback = Response
+		})
+	end
+end
+
+makefolder("Retrofiy")
+makefolder("Retrofiy\\Patches")
+DownloadFiles("Retrofiy")
 
 if RetrofiyConfig.RetroLighting then
 	local RestrictedLighting = {
