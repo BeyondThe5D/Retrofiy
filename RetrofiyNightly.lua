@@ -175,6 +175,8 @@ renderSteppedConnection = RunService.RenderStepped:connect(function()
 	end
 end)
 
+-- End of stolen code
+
 local VirtualMouseIconEnabled = UserInputService.MouseIconEnabled
 UserInputService.MouseIconEnabled = false
 
@@ -899,13 +901,12 @@ if RetrofiyConfig.RetroChat then
 		end)
 
 		Scroller.ChildAdded:Connect(function(object)
-			RunService.RenderStepped:Wait()
-
 			if object:FindFirstChildOfClass("TextLabel") then
 				local Message = object:FindFirstChildOfClass("TextLabel")
 
 				if not Message:FindFirstChildOfClass("TextButton") then
 					if Message.Text:find("Your friend ") then
+						RunService.RenderStepped:Wait()
 						object:Destroy()
 					end
 				end
