@@ -192,8 +192,10 @@ PlaceName.Text = GameInformation[2]
 local Player = Players.LocalPlayer
 local Mouse = Player:GetMouse()
 
+local DefaultMouse = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
+
 local FakeMouse = Drawing.new("Image")
-FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
+FakeMouse.Data = DefaultMouse
 FakeMouse.Position = Vector2.new(Mouse.X - 32, Mouse.Y)
 FakeMouse.Size = Vector2.new(64, 64)
 FakeMouse.Visible = VirtualMouseIconEnabled
@@ -219,8 +221,15 @@ Mouse.Move:Connect(function()
 	FakeMouse.Position = Vector2.new(Mouse.X - 32, Mouse.Y)
 end)
 
-Mouse:GetPropertyChangedSignal("Icon"):Connect(function() --Fix this later
-	-- game:HttpGet("https://tr.rbxcdn.com/763effda4df034818c15f23e27126a24/420/420/Image/Png")
+local IconReplacement = {
+	[""] = DefaultMouse
+}
+
+Mouse:GetPropertyChangedSignal("Icon"):Connect(function()
+	local Icon = IconReplacement[Mouse.Icon]
+	local NewIcon = (Icon and readfile(Icon)) or game:HttpGet("https://tr.rbxcdn.com/763effda4df034818c15f23e27126a24/420/420/Image/Png") -- placeholder
+	DefaultMouse = NewIcon
+	FakeMouse.Data = NewIcon
 end)
 
 local function ApplyMouseHover(button)
@@ -230,7 +239,7 @@ local function ApplyMouseHover(button)
 		end)
 
 		button.MouseLeave:Connect(function()
-			FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
+			FakeMouse.Data = DefaultMouse
 		end)
 	end
 end
