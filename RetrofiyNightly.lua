@@ -186,13 +186,13 @@ end
 
 Message:Destroy()
 
+local Player = Players.LocalPlayer
+local Mouse = Player:GetMouse()
+
 local GameInformation = {UserService:GetUserInfosByUserIdsAsync({game.CreatorId})[1].DisplayName, MarketplaceService:GetProductInfo(game.PlaceId).Name}
 
 CreatorName.Text = "By " .. GameInformation[1]
 PlaceName.Text = GameInformation[2]
-
-local Player = Players.LocalPlayer
-local Mouse = Player:GetMouse()
 
 local DefaultMouse = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
 
