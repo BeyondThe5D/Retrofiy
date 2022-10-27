@@ -7,9 +7,9 @@ Retrofiy aims to accurately convert any Roblox game that the script is executed 
 # Evaulation criteria (In order of importance)
 1. **Survivability** - We strictly try avoid using HTTP services unless necessary and when it is used it's usually to download assets, theses assets can also be downloaded from an archive [here](https://archive.org/details/retrofiy_asset_archive).
 2. **Accuracy** - We try to make this script almost 1:1 with a original 2016 Roblox client, we do tons of research and double check that research ourselves to ensure you are getting the most accurate experience possible.
-3. **Game compatibility** - Making sure almost all games can run this script.
-4. **Performance** - Making sure the script runs at a reasonable speed, even on low-end hardware.
-5. **Exploit compatibility** - Making sure almost all exploits can run this script.
+3. **Game compatibility** - We try make sure that every single Roblox game the script is executed into will have no issues.
+4. **Performance** - We try optimise the script as much as possible and try make it run on lower-end hardware.
+5. **Exploit compatibility** - We make sure to test the script on the best exploits available to the public.
 # Confirmed working exploits
 - [Synapse X](https://x.synapse.to)
 - [Krnl](https://krnl.place)
