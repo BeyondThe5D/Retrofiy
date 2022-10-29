@@ -497,8 +497,10 @@ if RetrofiyConfig.RetroCoreGui then
 	NameContainer.MouseButton1Down:Connect(function()
 		TogglePlayerlist()
 	end)
-
-	AttachHumanoidToHealthBar(Player.Character:WaitForChild("Humanoid"))
+	
+	if Player.Character and Player.Character:FindFirstChild("Humanoid") then
+		AttachHumanoidToHealthBar(Player.Character.Humanoid)
+	end
 
 	Player.CharacterAdded:Connect(function(character)
 		AttachHumanoidToHealthBar(character:WaitForChild("Humanoid"))
@@ -816,7 +818,7 @@ if RetrofiyConfig.RetroCharacters then
 		[746825633] = 81628308
 	}
 
-	local function ConvertCharacter(object)
+	local function ConvertCharacter(object) -- Could be optimised with a table
 		if object:IsA("Humanoid") then
 			if object.HealthDisplayType == Enum.HumanoidHealthDisplayType.DisplayWhenDamaged then
 				object.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
@@ -861,10 +863,12 @@ if RetrofiyConfig.RetroCharacters then
 
 	spawn(function()
 		while true do
-			for _, humanoids in pairs(Humanoids) do -- Does not work if player has infinite health!
-				humanoids.MaxHealth += 0.1
-				RunService.RenderStepped:Wait()
-				humanoids.MaxHealth -= 0.1
+			while #Humanoids > 0 do
+				for _, humanoids in pairs(Humanoids) do -- Does not work if player has infinite health!
+					humanoids.MaxHealth += 0.1
+					RunService.RenderStepped:Wait()
+					humanoids.MaxHealth -= 0.1
+				end
 			end
 			RunService.RenderStepped:Wait()
 		end
