@@ -624,7 +624,7 @@ if RetrofiyConfig.RetroCoreGui then
 			end
 		end)
 
-		spawn(function()
+		task.spawn(function()
 			local SpecialPlayer = SpecialPlayers[player.UserId]
 
 			if player.UserId == game.CreatorId then
@@ -730,7 +730,7 @@ if RetrofiyConfig.RetroCoreGui then
 		[true] = UDim2.new(0, 7, 0, 0),
 		[false] = UDim2.new(0, 7, 0, 3)
 	}
-	
+
 	local function ConvertHint(object)
 		if object:IsA("Hint") then
 			local Hint = Instance.new("TextLabel")
@@ -744,23 +744,23 @@ if RetrofiyConfig.RetroCoreGui then
 			Hint.TextColor3 = Color3.fromRGB(255, 255, 255)
 			Hint.TextSize = 21
 			Hint.Parent = RetroGui
-			
+
 			object:GetPropertyChangedSignal("Text"):Connect(function()
 				Hint.Text = object.Text
 			end)
-			
+
 			object.Destroying:Connect(function()
 				Hint:Destroy()
 			end)
 		end
 	end
-	
+
 	for _, objects in pairs(workspace:GetDescendants()) do
 		ConvertHint(objects)
 	end
-	
+
 	workspace.DescendantAdded:Connect(ConvertHint)
-	
+
 	RunService.RenderStepped:Connect(function()
 		local PlayerlistVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList)
 		local HealthVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health)
@@ -891,7 +891,7 @@ if RetrofiyConfig.RetroCharacters then
 		PreviousCameraSubject = workspace.CurrentCamera.CameraSubject
 	end)
 
-	spawn(function()
+	task.spawn(function()
 		while true do
 			while #Humanoids > 0 do
 				for _, humanoids in pairs(Humanoids) do -- Does not work if player has infinite health!
