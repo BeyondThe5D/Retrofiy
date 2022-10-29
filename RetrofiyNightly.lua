@@ -497,7 +497,7 @@ if RetrofiyConfig.RetroCoreGui then
 	NameContainer.MouseButton1Down:Connect(function()
 		TogglePlayerlist()
 	end)
-	
+
 	if Player.Character and Player.Character:FindFirstChild("Humanoid") then
 		AttachHumanoidToHealthBar(Player.Character.Humanoid)
 	end
@@ -730,7 +730,37 @@ if RetrofiyConfig.RetroCoreGui then
 		[true] = UDim2.new(0, 7, 0, 0),
 		[false] = UDim2.new(0, 7, 0, 3)
 	}
-
+	
+	local function ConvertHint(object)
+		if object:IsA("Hint") then
+			local Hint = Instance.new("TextLabel")
+			Hint.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			Hint.BorderSizePixel = 0
+			Hint.Position = UDim2.new(0, 0, 0, 36)
+			Hint.Size = UDim2.new(1, 0, 0, 20)
+			Hint.ZIndex = 0
+			Hint.Font = Enum.Font.Arial
+			Hint.Text = object.Text
+			Hint.TextColor3 = Color3.fromRGB(255, 255, 255)
+			Hint.TextSize = 21
+			Hint.Parent = RetroGui
+			
+			object:GetPropertyChangedSignal("Text"):Connect(function()
+				Hint.Text = object.Text
+			end)
+			
+			object.Destroying:Connect(function()
+				Hint:Destroy()
+			end)
+		end
+	end
+	
+	for _, objects in pairs(workspace:GetDescendants()) do
+		ConvertHint(objects)
+	end
+	
+	workspace.DescendantAdded:Connect(ConvertHint)
+	
 	RunService.RenderStepped:Connect(function()
 		local PlayerlistVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList)
 		local HealthVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health)
