@@ -20,6 +20,13 @@
 	[O] - Optional, improvement or a personal preference
 --]]
 
+if RetrofiyLoaded then
+	print("Retrofiy is already loaded!")
+	return
+end
+
+pcall(function() getgenv().RetrofiyLoaded = true end)
+
 local RetrofiyConfig = {
 	RetroLighting = true, -- [R] -- Force disables lighting properties that weren't in 2016, uses compatibility Techology and deletes effects not seen in 2016
 	RetroCoreGui = true, -- [B] -- Replaces the Core Gui with a 2016 Core Gui (Playerlist, topbar, etc)
@@ -494,9 +501,7 @@ if RetrofiyConfig.RetroCoreGui then
 	BackpackButton.MouseButton1Down:Connect(function()
 		ImprovedKeyPress({0xDF, 0xC0})
 	end)
-	NameContainer.MouseButton1Down:Connect(function()
-		TogglePlayerlist()
-	end)
+	NameContainer.MouseButton1Down:Connect(TogglePlayerlist)
 
 	if Player.Character and Player.Character:FindFirstChild("Humanoid") then
 		AttachHumanoidToHealthBar(Player.Character.Humanoid)
@@ -653,9 +658,7 @@ if RetrofiyConfig.RetroCoreGui then
 		AddPlayerToPlayerlist(players)
 	end
 
-	Players.PlayerAdded:Connect(function(player)
-		AddPlayerToPlayerlist(player)
-	end)
+	Players.PlayerAdded:Connect(AddPlayerToPlayerlist)
 
 	Players.PlayerRemoving:Connect(function(player)
 		if PlayerlistContainer:FindFirstChild(player.UserId) then
@@ -828,9 +831,7 @@ if RetrofiyConfig.RetroWorkspace then
 		ConvertBasePart(baseparts)
 	end
 
-	workspace.DescendantAdded:Connect(function(basepart)
-		ConvertBasePart(basepart)
-	end)
+	workspace.DescendantAdded:Connect(ConvertBasePart)
 
 	sethiddenproperty(workspace:FindFirstChildOfClass("Terrain"), "Decoration", false)
 
@@ -848,23 +849,35 @@ if RetrofiyConfig.RetroCharacters then
 		[746825633] = 81628308
 	}
 
-	local function ConvertCharacter(object) -- Could be optimised with a table
-		if object:IsA("Humanoid") then
-			if object.HealthDisplayType == Enum.HumanoidHealthDisplayType.DisplayWhenDamaged then
-				object.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
+	local Conversion = {
+		["Humanoid"] = function(humanoid)
+			if humanoid.HealthDisplayType == Enum.HumanoidHealthDisplayType.DisplayWhenDamaged then
+				humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
 			end
 
-			if workspace.CurrentCamera.CameraSubject ~= object and not table.find(Humanoids, object) then
-				table.insert(Humanoids, object)
+			if workspace.CurrentCamera.CameraSubject ~= humanoid and not table.find(Humanoids, humanoid) then
+				table.insert(Humanoids, humanoid)
 			end
-		elseif object:IsA("Sound") and object.SoundId == "rbxasset://sounds/uuhhh.mp3" then
-			object.SoundId = GetAsset("Retrofiy/Assets/Sounds/uuhhh.mp3")
-		elseif object:IsA("CharacterMesh") then 
-			local MeshId = WomanLegs[object.MeshId]
+		end,
+		["Sound"] = function(sound)
+			if sound.SoundId == "rbxasset://sounds/uuhhh.mp3" then
+				sound.SoundId = GetAsset("Retrofiy/Assets/Sounds/uuhhh.mp3")
+			end
+		end,
+		["CharacterMesh"] = function(charactermesh)
+			local MeshId = WomanLegs[charactermesh.MeshId]
 
 			if MeshId then
-				object.MeshId = MeshId
+				charactermesh.MeshId = MeshId
 			end
+		end
+	}
+
+	local function ConvertCharacter(object)
+		local Convert = Conversion[object.ClassName]
+
+		if Convert then
+			Convert(object)
 		end
 	end
 
@@ -895,9 +908,9 @@ if RetrofiyConfig.RetroCharacters then
 		while true do
 			while #Humanoids > 0 do
 				for _, humanoids in pairs(Humanoids) do -- Does not work if player has infinite health!
-					humanoids.MaxHealth += 0.1
+					humanoids.MaxHealth += 0.001
 					RunService.RenderStepped:Wait()
-					humanoids.MaxHealth -= 0.1
+					humanoids.MaxHealth -= 0.001
 				end
 			end
 			RunService.RenderStepped:Wait()
@@ -961,9 +974,7 @@ if RetrofiyConfig.RetroChat then
 
 		UpdateBarThickness()
 
-		Scroller:GetPropertyChangedSignal("ScrollBarThickness"):Connect(function(value)
-			UpdateBarThickness()
-		end)
+		Scroller:GetPropertyChangedSignal("ScrollBarThickness"):Connect(UpdateBarThickness)
 	end
 end
 
