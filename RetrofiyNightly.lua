@@ -779,7 +779,6 @@ if RetrofiyConfig.RetroCoreGui then
 	    local Args = {...}
 	    if checkcaller() then
 		if tostring(Args[1]) == "Hint" and tostring(method) == "FindFindFirstChildWhichIsA" then
-		    print("ezz")
 		    return Hints[1] or nil
 		end
 	    end
