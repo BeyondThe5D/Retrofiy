@@ -733,6 +733,8 @@ if RetrofiyConfig.RetroCoreGui then
 		[false] = UDim2.new(0, 7, 0, 3)
 	}
 
+	local Hints = {}
+
 	local function ConvertHint(object)
 		if object:IsA("Hint") then
 			local Hint = Instance.new("TextLabel")
@@ -745,13 +747,20 @@ if RetrofiyConfig.RetroCoreGui then
 			Hint.Text = object.Text
 			Hint.TextColor3 = Color3.fromRGB(255, 255, 255)
 			Hint.TextSize = 21
-			Hint.Parent = RetroGui
+			Hint.Parent = game:GetService("CoreGui").RobloxGui --RetroGui
 
-			object:GetPropertyChangedSignal("Text"):Connect(function()
-				Hint.Text = object.Text
+		local FakeMessage = Instance.new("TextLabel", object.Parent)
+		FakeMessage.Name = object.Name
+		FakeMessage.Text = object.Text
+
+		table.insert(Hints, FakeMessage)
+
+		object:Destroy()
+
+			FakeMessage:GetPropertyChangedSignal("Text"):Connect(function()
+				Hint.Text = FakeMessage.Text
 			end)
-
-			object.Destroying:Connect(function()
+			FakeMessage.Destroying:Connect(function()
 				Hint:Destroy()
 			end)
 		end
@@ -760,6 +769,24 @@ if RetrofiyConfig.RetroCoreGui then
 	for _, objects in pairs(workspace:GetDescendants()) do
 		ConvertHint(objects)
 	end
+
+	local gm = getrawmetatable(game)
+	local oldnamecall = gm.__namecall
+	setreadonly(gm, false)
+
+	gm.__namecall = newcclosure(function(self, ...)
+	    local method = getnamecallmethod()
+	    local Args = {...}
+	    if checkcaller() then
+		if tostring(Args[1]) == "Hint" and tostring(method) == "FindFindFirstChildWhichIsA" then
+		    print("ezz")
+		    return Hints[1] or nil
+		end
+	    end
+	    return oldnamecall(self, ...)
+	end)
+
+	setreadonly(gm, true)
 
 	workspace.DescendantAdded:Connect(ConvertHint)
 
