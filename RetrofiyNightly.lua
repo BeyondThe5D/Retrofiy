@@ -241,10 +241,10 @@ local IconReplacement = {
 }
 
 Mouse:GetPropertyChangedSignal("Icon"):Connect(function()
-	local Icon = IconReplacement[Mouse.Icon]
-	local NewIcon = (Icon and readfile(Icon)) or game:HttpGet("https://tr.rbxcdn.com/763effda4df034818c15f23e27126a24/420/420/Image/Png") -- placeholder
-	DefaultMouse = NewIcon
-	FakeMouse.Data = NewIcon
+	--local Icon = IconReplacement[Mouse.Icon]
+	--local NewIcon = (Icon and readfile(Icon)) or game:HttpGet("https://tr.rbxcdn.com/763effda4df034818c15f23e27126a24/420/420/Image/Png") -- placeholder
+	--DefaultMouse = NewIcon
+	--FakeMouse.Data = NewIcon
 end)
 
 local function ApplyMouseHover(button)
@@ -755,9 +755,9 @@ if RetrofiyConfig.RetroCoreGui then
 			FakeHint.Parent = object.Parent
 
 			table.insert(Hints, FakeHint)
-			
+
 			object.Parent = game:GetService("BrowserService")
-			
+
 			object:GetPropertyChangedSignal("Text"):Connect(function()
 				Hint.Text = object.Text
 				FakeHint.Text = object.Text
@@ -770,31 +770,31 @@ if RetrofiyConfig.RetroCoreGui then
 			end)
 		end
 	end
-	
+
 	local RawMetaTable = getrawmetatable(game)
 	local OldNameCall = RawMetaTable.__namecall
 
 	for _, objects in pairs(workspace:GetDescendants()) do
 		ConvertHint(objects)
 	end
-	
+
 	setreadonly(RawMetaTable, false)
 	RawMetaTable.__namecall = newcclosure(function(self, ...)
 		local Method = getnamecallmethod()
 		local Args = {...}
-		
+
 		if checkcaller() then
 			if tostring(Args[1]) == "Hint" and tostring(Method) == "FindFindFirstChildWhichIsA" then
 				return Hints[1] or nil
 			end
 		end
-		
+
 		return OldNameCall(self, ...)
 	end)
 	setreadonly(RawMetaTable, true)
-	
+
 	workspace.DescendantAdded:Connect(ConvertHint)
-	
+
 	RunService.RenderStepped:Connect(function()
 		local PlayerlistVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList)
 		local HealthVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health)
