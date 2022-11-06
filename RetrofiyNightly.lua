@@ -747,7 +747,7 @@ if RetrofiyConfig.RetroCoreGui then
 			Hint.Text = object.Text
 			Hint.TextColor3 = Color3.fromRGB(255, 255, 255)
 			Hint.TextSize = 21
-			Hint.Parent = game:GetService("CoreGui").RobloxGui --RetroGui
+			Hint.Parent = RetroGui
 
 		local FakeMessage = Instance.new("TextLabel", object.Parent)
 		FakeMessage.Name = object.Name
