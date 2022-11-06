@@ -749,46 +749,52 @@ if RetrofiyConfig.RetroCoreGui then
 			Hint.TextSize = 21
 			Hint.Parent = RetroGui
 
-		local FakeMessage = Instance.new("TextLabel", object.Parent)
-		FakeMessage.Name = object.Name
-		FakeMessage.Text = object.Text
+			local FakeHint = Instance.new("TextLabel")
+			FakeHint.Name = object.Name
+			FakeHint.Text = object.Text
+			FakeHint.Parent = object.Parent
 
-		table.insert(Hints, FakeMessage)
-
-		object:Destroy()
-
-			FakeMessage:GetPropertyChangedSignal("Text"):Connect(function()
-				Hint.Text = FakeMessage.Text
+			table.insert(Hints, FakeHint)
+			
+			object.Parent = game:GetService("BrowserService")
+			
+			object:GetPropertyChangedSignal("Text"):Connect(function()
+				Hint.Text = object.Text
+				FakeHint.Text = object.Text
 			end)
-			FakeMessage.Destroying:Connect(function()
-				Hint:Destroy()
+			object:GetPropertyChangedSignal("Parent"):Connect(function()
+				if not object:IsDescendantOf(workspace) then
+					Hint:Destroy()
+					table.remove(Hints, table.find(Hints, FakeHint))
+				end
 			end)
 		end
 	end
+	
+	local RawMetaTable = getrawmetatable(game)
+	local OldNameCall = RawMetaTable.__namecall
 
 	for _, objects in pairs(workspace:GetDescendants()) do
 		ConvertHint(objects)
 	end
-
-	local gm = getrawmetatable(game)
-	local oldnamecall = gm.__namecall
-	setreadonly(gm, false)
-
-	gm.__namecall = newcclosure(function(self, ...)
-	    local method = getnamecallmethod()
-	    local Args = {...}
-	    if checkcaller() then
-		if tostring(Args[1]) == "Hint" and tostring(method) == "FindFindFirstChildWhichIsA" then
-		    return Hints[1] or nil
+	
+	setreadonly(RawMetaTable, false)
+	RawMetaTable.__namecall = newcclosure(function(self, ...)
+		local Method = getnamecallmethod()
+		local Args = {...}
+		
+		if checkcaller() then
+			if tostring(Args[1]) == "Hint" and tostring(Method) == "FindFindFirstChildWhichIsA" then
+				return Hints[1] or nil
+			end
 		end
-	    end
-	    return oldnamecall(self, ...)
+		
+		return OldNameCall(self, ...)
 	end)
-
-	setreadonly(gm, true)
-
+	setreadonly(RawMetaTable, true)
+	
 	workspace.DescendantAdded:Connect(ConvertHint)
-
+	
 	RunService.RenderStepped:Connect(function()
 		local PlayerlistVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList)
 		local HealthVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health)
