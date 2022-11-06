@@ -366,8 +366,7 @@ if RetrofiyConfig.RetroCoreGui then
 	}
 	local SpecialPlayers = {
 		[2601528367] = "icon_DEV-16.png",
-		[3897409161] = "icon_DEV-16.png",
-		[2408936922] = "icon_DEV-16.png"
+		[3897409161] = "icon_DEV-16.png"
 	}
 
 	local CanTogglePlayerlist = true
