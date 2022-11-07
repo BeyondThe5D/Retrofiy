@@ -759,7 +759,18 @@ if RetrofiyConfig.RetroCoreGui then
 			table.insert(Hints, FakeHint)
 
 			object.Parent = game:GetService("BrowserService")
+			
+			FakeHint:GetPropertyChangedSignal("Text"):Connect(function()
+				Hint.Text = FakeHint.Text
+				object.Text = FakeHint.Text
+			end)
 
+			FakeHint.Destroying:Connect(function()
+				table.remove(Hints, table.find(Hints, FakeHint))
+				Hint:Destroy()
+				object:Destroy()
+			end)
+			
 			object:GetPropertyChangedSignal("Text"):Connect(function()
 				Hint.Text = object.Text
 				FakeHint.Text = object.Text
@@ -773,27 +784,29 @@ if RetrofiyConfig.RetroCoreGui then
 		end
 	end
 
-	for _, objects in pairs(workspace:GetDescendants()) do
-		ConvertHint(objects)
-	end
-
 	local OldNameCall
 	OldNameCall = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
 		local Method = getnamecallmethod()
 		local Args = {...}
 
 		if checkcaller() then
-			if tostring(Args[1]) == "Hint" and tostring(Method) == "FindFirstChildWhichIsA" then
-				return Hints[1] or nil
+			if tostring(Args[1]) == "Hint" and Method == "FindFirstChildWhichIsA" then
+				return Hints[1]
 			end
 		end
 
 		return OldNameCall(self, ...)
 	end))
-
+	
+	for _, objects in pairs(workspace:GetDescendants()) do
+		ConvertHint(objects)
+	end
+	
 	workspace.DescendantAdded:Connect(ConvertHint)
 
 	RunService.RenderStepped:Connect(function()
+		print(#Hints)
+		
 		local PlayerlistVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList)
 		local HealthVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health)
 
