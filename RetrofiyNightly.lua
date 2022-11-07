@@ -737,7 +737,8 @@ if RetrofiyConfig.RetroCoreGui then
 
 	local function ConvertHint(object)
 		if object:IsA("Hint") then
-            task.wait(.05)
+			RunService.RenderStepped:Wait()
+
 			local Hint = Instance.new("TextLabel")
 			Hint.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 			Hint.BorderSizePixel = 0
