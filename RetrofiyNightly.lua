@@ -204,8 +204,8 @@ else
 	Creator = "temporary"
 end
 
-CreatorName.Text = "By " .. Creator
 PlaceName.Text = MarketplaceService:GetProductInfo(game.PlaceId).Name
+CreatorName.Text = "By " .. Creator
 
 local function Connect(...)
 	return table.concat({...}, "/")
@@ -263,6 +263,7 @@ OldNewIndex = hookmetamethod(game, "__newindex", newcclosure(function(self, prop
 		VirtualMouseIconEnabled = value
 		return
 	end
+
 	return OldNewIndex(self, property, value)
 end))
 
@@ -271,6 +272,7 @@ OldIndex = hookmetamethod(game, "__index", newcclosure(function(self, property)
 	if self == UserInputService and property == "MouseIconEnabled" then
 		return VirtualMouseIconEnabled
 	end
+
 	return OldIndex(self, property)
 end))
 
