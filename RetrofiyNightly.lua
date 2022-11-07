@@ -759,7 +759,7 @@ if RetrofiyConfig.RetroCoreGui then
 			table.insert(Hints, FakeHint)
 
 			object.Parent = game:GetService("BrowserService")
-			
+
 			FakeHint:GetPropertyChangedSignal("Text"):Connect(function()
 				Hint.Text = FakeHint.Text
 				object.Text = FakeHint.Text
@@ -770,7 +770,7 @@ if RetrofiyConfig.RetroCoreGui then
 				Hint:Destroy()
 				object:Destroy()
 			end)
-			
+
 			object:GetPropertyChangedSignal("Text"):Connect(function()
 				Hint.Text = object.Text
 				FakeHint.Text = object.Text
@@ -797,16 +797,14 @@ if RetrofiyConfig.RetroCoreGui then
 
 		return OldNameCall(self, ...)
 	end))
-	
+
 	for _, objects in pairs(workspace:GetDescendants()) do
 		ConvertHint(objects)
 	end
-	
+
 	workspace.DescendantAdded:Connect(ConvertHint)
 
 	RunService.RenderStepped:Connect(function()
-		print(#Hints)
-		
 		local PlayerlistVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList)
 		local HealthVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health)
 
@@ -887,7 +885,7 @@ if RetrofiyConfig.RetroCharacters then
 	local Humanoids = {}
 
 	local WomanLegs = {
-		[746826007] = 81628361,
+		[746826007] = 81628361, -- Uses Roblox assets, need to try use a downloaded mesh instead
 		[746825633] = 81628308
 	}
 
