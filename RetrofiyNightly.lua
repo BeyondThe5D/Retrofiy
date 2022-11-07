@@ -737,6 +737,7 @@ if RetrofiyConfig.RetroCoreGui then
 
 	local function ConvertHint(object)
 		if object:IsA("Hint") then
+            task.wait(.05)
 			local Hint = Instance.new("TextLabel")
 			Hint.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 			Hint.BorderSizePixel = 0
@@ -784,7 +785,7 @@ if RetrofiyConfig.RetroCoreGui then
 		local Args = {...}
 
 		if checkcaller() then
-			if tostring(Args[1]) == "Hint" and tostring(Method) == "FindFindFirstChildWhichIsA" then
+			if tostring(Args[1]) == "Hint" and tostring(Method) == "FindFirstChildWhichIsA" then
 				return Hints[1] or nil
 			end
 		end
