@@ -773,15 +773,12 @@ if RetrofiyConfig.RetroCoreGui then
 		end
 	end
 
-	local RawMetaTable = getrawmetatable(game)
-	local OldNameCall = RawMetaTable.__namecall
-
 	for _, objects in pairs(workspace:GetDescendants()) do
 		ConvertHint(objects)
 	end
 
-	setreadonly(RawMetaTable, false)
-	RawMetaTable.__namecall = newcclosure(function(self, ...)
+	local OldNameCall
+	OldNameCall = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
 		local Method = getnamecallmethod()
 		local Args = {...}
 
@@ -792,8 +789,7 @@ if RetrofiyConfig.RetroCoreGui then
 		end
 
 		return OldNameCall(self, ...)
-	end)
-	setreadonly(RawMetaTable, true)
+	end))
 
 	workspace.DescendantAdded:Connect(ConvertHint)
 
