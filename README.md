@@ -23,7 +23,3 @@ Nightly version:
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/BeyondThe5D/Retrofiy/main/RetrofiyNightly.lua"))()
 ```
-# Contributions
-- [Beyond 5D](https://github.com/BeyondThe5D) - Main programmer & project leader.
-- [AdolfRoxler](https://github.com/AdolfRoxler) - Helped with memory leaks.
-- [Greenman](https://github.com/greenmancode) - Wrote the auto-downloader for the assets.
