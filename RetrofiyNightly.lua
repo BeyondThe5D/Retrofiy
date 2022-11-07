@@ -207,6 +207,48 @@ end
 CreatorName.Text = "By " .. Creator
 PlaceName.Text = MarketplaceService:GetProductInfo(game.PlaceId).Name
 
+local function Connect(...)
+	return table.concat({...}, "/")
+end
+
+local function DownloadFiles(directory)
+	local _, Error = pcall(function()
+		for _, item in pairs(HttpService:JSONDecode(game:HttpGet(Connect("https://api.github.com/repos/BeyondThe5D/Retrofiy/contents", directory)))) do
+			local NewPath = Connect(directory, item["name"])
+
+			if item["type"] == "dir" then
+				makefolder(NewPath)
+				DownloadFiles(NewPath)
+			elseif item["type"] == "file" and not isfile(NewPath) then
+				writefile(NewPath, game:HttpGet(item["download_url"]))
+			end
+		end
+	end)
+
+	if Error then
+		local Response = Instance.new("BindableFunction")
+		Response.OnInvoke = function(answer)
+			if answer == "Yes" then
+				setclipboard("https://archive.org/details/retrofiy_asset_archive")
+			end
+			Response:Destroy()
+		end
+
+		StarterGui:SetCore("SendNotification", {
+			Title = "Retrofiy Error!",
+			Text = "Retrofiy couldn't check if you have the most up-to-date assets installed, do you want a download link set to ur clipboard?",
+			Duration = math.huge,
+			Button1 = "Yes",
+			Button2 = "No",
+			Callback = Response
+		})
+	end
+end
+
+makefolder("Retrofiy")
+makefolder("Retrofiy\\Patches")
+DownloadFiles("Retrofiy")
+
 local DefaultMouse = readfile("Retrofiy/Assets/Textures/ArrowFarCursor.png")
 
 local FakeMouse = Drawing.new("Image")
@@ -270,48 +312,6 @@ end)
 UserInputService.Changed:Connect(function()
 	FakeMouse.Visible = UserInputService.MouseIconEnabled
 end)
-
-local function Connect(...)
-	return table.concat({...}, "/")
-end
-
-local function DownloadFiles(directory)
-	local _, Error = pcall(function()
-		for _, item in pairs(HttpService:JSONDecode(game:HttpGet(Connect("https://api.github.com/repos/BeyondThe5D/Retrofiy/contents", directory)))) do
-			local NewPath = Connect(directory, item["name"])
-
-			if item["type"] == "dir" then
-				makefolder(NewPath)
-				DownloadFiles(NewPath)
-			elseif item["type"] == "file" and not isfile(NewPath) then
-				writefile(NewPath, game:HttpGet(item["download_url"]))
-			end
-		end
-	end)
-
-	if Error then
-		local Response = Instance.new("BindableFunction")
-		Response.OnInvoke = function(answer)
-			if answer == "Yes" then
-				setclipboard("https://archive.org/details/retrofiy_asset_archive")
-			end
-			Response:Destroy()
-		end
-
-		StarterGui:SetCore("SendNotification", {
-			Title = "Retrofiy Error!",
-			Text = "Retrofiy couldn't check if you have the most up-to-date assets installed, do you want a download link set to ur clipboard?",
-			Duration = math.huge,
-			Button1 = "Yes",
-			Button2 = "No",
-			Callback = Response
-		})
-	end
-end
-
-makefolder("Retrofiy")
-makefolder("Retrofiy\\Patches")
-DownloadFiles("Retrofiy")
 
 if RetrofiyConfig.RetroLighting then
 	local RestrictedLighting = {
