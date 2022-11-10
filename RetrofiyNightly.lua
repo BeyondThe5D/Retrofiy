@@ -65,13 +65,6 @@ local function ImprovedKeyPress(keys)
 	end
 end
 
-if identifyexecutor():lower():find("krnl") then -- Temporary
-	getgenv().sethiddenproperty = function(obj, prop, value)
-		setscriptable(obj, prop, true)
-		obj[prop] = value
-	end
-end
-
 CoreGui:WaitForChild("RobloxLoadingGui").Enabled = false
 
 local LoadingScreen = Instance.new("ScreenGui")
