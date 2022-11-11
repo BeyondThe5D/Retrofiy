@@ -300,9 +300,7 @@ for _, buttons in pairs(game:GetDescendants()) do
 	ApplyMouseHover(buttons)
 end
 
-game.DescendantAdded:Connect(function(button)
-	ApplyMouseHover(button)
-end)
+game.DescendantAdded:Connect(ApplyMouseHover)
 
 UserInputService.Changed:Connect(function()
 	FakeMouse.Visible = UserInputService.MouseIconEnabled
@@ -332,11 +330,11 @@ if RetrofiyConfig.RetroLighting then
 		Lighting[property] = value
 	end
 
+	Lighting.DescendantAdded:Connect(RemoveEffect)
+
 	for _, effects in pairs(Lighting:GetDescendants()) do
 		RemoveEffect(effects)
 	end
-
-	Lighting.DescendantAdded:Connect(RemoveEffect)
 
 	Lighting.Changed:Connect(function(property)
 		local Property = RestrictedLighting[property]
@@ -648,11 +646,11 @@ if RetrofiyConfig.RetroCoreGui then
 		end
 	end
 
+	Players.PlayerAdded:Connect(AddPlayerToPlayerlist)
+
 	for _, players in pairs(Players:GetPlayers()) do
 		AddPlayerToPlayerlist(players)
 	end
-
-	Players.PlayerAdded:Connect(AddPlayerToPlayerlist)
 
 	Players.PlayerRemoving:Connect(function(player)
 		if PlayerlistContainer:FindFirstChild(player.UserId) then
@@ -671,25 +669,21 @@ if RetrofiyConfig.RetroCoreGui then
 	end)
 
 	local function ConvertScrollingFrame(scrollingframe) -- Maybe change the thickness of the scrollbar to?
-		scrollingframe.ScrollBarImageColor3 = Color3.fromRGB(56, 56, 56)
-		scrollingframe.ScrollBarImageTransparency = 0
-		scrollingframe.Changed:Connect(function()
+		if scrollingframe:IsA("ScrollingFrame") then
 			scrollingframe.ScrollBarImageColor3 = Color3.fromRGB(56, 56, 56)
 			scrollingframe.ScrollBarImageTransparency = 0
-		end)
+			scrollingframe.Changed:Connect(function()
+				scrollingframe.ScrollBarImageColor3 = Color3.fromRGB(56, 56, 56)
+				scrollingframe.ScrollBarImageTransparency = 0
+			end)
+		end
 	end
+
+	workspace.DescendantAdded:Connect(ConvertScrollingFrame)
 
 	for _, scrollingframes in pairs(game:GetDescendants()) do
-		if scrollingframes:IsA("ScrollingFrame") then
-			ConvertScrollingFrame(scrollingframes)
-		end
+		ConvertScrollingFrame(scrollingframes)
 	end
-
-	workspace.DescendantAdded:Connect(function(scrollingframe)
-		if scrollingframe:IsA("ScrollingFrame") then
-			ConvertScrollingFrame(scrollingframe)
-		end
-	end)
 
 	local MessageReplacement = {
 		["You have been kicked from the game"] = "You have lost the connection to the game",
@@ -708,13 +702,11 @@ if RetrofiyConfig.RetroCoreGui then
 		if not RemovedGuis then
 			RemovedGuis = true
 
+			Player.PlayerGui.ChildAdded:Connect(DestroyGui)
+
 			for _, guis in pairs(Player.PlayerGui:GetChildren()) do
 				DestroyGui(guis)
 			end
-
-			Player.PlayerGui.ChildAdded:Connect(function(gui)
-				DestroyGui(gui)
-			end)
 		end
 
 		GuiService:ClearError()
@@ -793,11 +785,11 @@ if RetrofiyConfig.RetroCoreGui then
 		return OldNameCall(self, ...)
 	end))
 
+	workspace.DescendantAdded:Connect(ConvertHint)
+
 	for _, objects in pairs(workspace:GetDescendants()) do
 		ConvertHint(objects)
 	end
-
-	workspace.DescendantAdded:Connect(ConvertHint)
 
 	RunService.RenderStepped:Connect(function()
 		local PlayerlistVisibility = StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList)
@@ -862,11 +854,11 @@ if RetrofiyConfig.RetroWorkspace then
 		end
 	end
 
+	workspace.DescendantAdded:Connect(ConvertBasePart)
+
 	for _, baseparts in pairs(workspace:GetDescendants()) do
 		ConvertBasePart(baseparts)
 	end
-
-	workspace.DescendantAdded:Connect(ConvertBasePart)
 
 	sethiddenproperty(workspace:FindFirstChildOfClass("Terrain"), "Decoration", false)
 
@@ -916,11 +908,11 @@ if RetrofiyConfig.RetroCharacters then
 		end
 	end
 
+	workspace.DescendantAdded:Connect(ConvertCharacter)
+
 	for _, objects in pairs(workspace:GetDescendants()) do
 		ConvertCharacter(objects)
 	end
-
-	workspace.DescendantAdded:Connect(ConvertCharacter)
 
 	workspace.DescendantRemoving:Connect(function(object)
 		if table.find(Humanoids, object) then
