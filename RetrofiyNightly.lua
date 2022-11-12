@@ -285,9 +285,11 @@ Mouse:GetPropertyChangedSignal("Icon"):Connect(function()
 end)
 
 local function ApplyMouseHover(button)
-	if button:IsA("GuiObject") and button.Active then
+	if button:IsA("GuiObject") then
 		button.MouseEnter:Connect(function()
-			FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowCursor.png")
+			if button.Active then
+				FakeMouse.Data = readfile("Retrofiy/Assets/Textures/ArrowCursor.png")
+			end
 		end)
 
 		button.MouseLeave:Connect(function()
