@@ -1005,9 +1005,9 @@ if RetrofiyConfig.RetroChat then
 			end
 		end
 
-		UpdateBarThickness()
+		Scroller:GetPropertyChangedSignal("ScrollBarThickness"):Connect(UpdateBarThickness) -- Might not effect chat
 
-		Scroller:GetPropertyChangedSignal("ScrollBarThickness"):Connect(UpdateBarThickness)
+		UpdateBarThickness()
 	end
 end
 
