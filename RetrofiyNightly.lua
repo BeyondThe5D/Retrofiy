@@ -149,7 +149,7 @@ LoadingImage.Parent = Loading
 
 -- This part of the code was just straight up taken from the 2016 client, it doesn't fully work though for some reason and will be optimised and fixed soon :)
 
-local u1 = nil
+local u1 = nil -- Yo remember to actually work on this jackass
 local u2 = nil
 local u3 = "..."
 
@@ -492,9 +492,11 @@ if RetrofiyConfig.RetroCoreGui then
 			Player.PlayerGui.Chat.Frame.Visible = not Player.PlayerGui.Chat.Frame.Visible
 		end
 	end)
+
 	BackpackButton.MouseButton1Down:Connect(function()
 		ImprovedKeyPress({0xDF, 0xC0})
 	end)
+
 	NameContainer.MouseButton1Down:Connect(TogglePlayerlist)
 
 	if Player.Character and Player.Character:FindFirstChild("Humanoid") then
@@ -660,7 +662,7 @@ if RetrofiyConfig.RetroCoreGui then
 		end
 	end)
 
-	if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then
+	if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then -- Need to properly check if this is how it would work
 		Player.PlayerGui.Chat.Frame.Changed:Connect(function()
 			ChatButton.ImageLabel.Image = GetAsset("Retrofiy/Assets/Textures/" .. ChatTextures[Player.PlayerGui.Chat.Frame.Visible])
 		end)
@@ -865,6 +867,7 @@ if RetrofiyConfig.RetroWorkspace then
 	sethiddenproperty(workspace:FindFirstChildOfClass("Terrain"), "Decoration", false)
 
 	MaterialService.Use2022Materials = false
+
 	MaterialService:GetPropertyChangedSignal("Use2022Materials"):Connect(function()
 		MaterialService.Use2022Materials = false
 	end)
@@ -930,6 +933,7 @@ if RetrofiyConfig.RetroCharacters then
 		else
 			ConvertCharacter(PreviousCameraSubject)
 		end
+
 		PreviousCameraSubject = workspace.CurrentCamera.CameraSubject
 	end)
 
@@ -948,7 +952,7 @@ if RetrofiyConfig.RetroCharacters then
 end
 
 if RetrofiyConfig.RetroChat then
-	if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then
+	if Chat.LoadDefaultChat and Player.PlayerGui:FindFirstChild("Chat") then -- Could be optimised/Rewritten (Might be better to just straight up use the 2016 chat code)
 		OriginalChat = Player.PlayerGui.Chat
 
 		local ChatFrame = OriginalChat.Frame
