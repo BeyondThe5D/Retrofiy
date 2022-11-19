@@ -65,8 +65,6 @@ local function ImprovedKeyPress(keys)
 	end
 end
 
-CoreGui:WaitForChild("RobloxLoadingGui").Enabled = false
-
 local LoadingScreen = Instance.new("ScreenGui")
 LoadingScreen.DisplayOrder = MaxInteger[true] -- maybe lower lol
 LoadingScreen.IgnoreGuiInset = true
