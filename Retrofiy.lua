@@ -572,6 +572,7 @@ if RetrofiyConfig.RetroWorkspace then
 				local Studs = Instance.new("Texture")
 				Studs.Color3 = basepart.Color -- omg lua
 				Studs.Color3 = Color3.new(Studs.Color3.R * 2, Studs.Color3.G * 2, Studs.Color3.B * 2)
+				Studs.StudsPerTileV = 4
 				Studs.Texture = GetAsset("Retrofiy/Assets/Textures/Studs.png")
 				Studs.Transparency = basepart.Transparency
 				Studs.ZIndex = -2147483648
