@@ -25,9 +25,12 @@ if RetrofiyLoaded then
 	return
 end
 
+math.randomseed(tick()) -- For Loading Screen Fix
+
 pcall(function() getgenv().RetrofiyLoaded = true end)
 
 local RetrofiyConfig = {
+        LoadingScreenFix = true, -- [R] -- IMPORTANT OPTION, LEAVE AS TRUE. Fixes infinite loading on the LoadingScreen in games
 	RetroLighting = true, -- [R] -- Force disables lighting properties that weren't in 2016, uses compatibility Techology and deletes effects not seen in 2016
 	RetroCoreGui = true, -- [B] -- Replaces the Core Gui with a 2016 Core Gui (Playerlist, topbar, etc)
 	RetroWorkspace = true, -- [R] -- Uses old materials, disables terrain decoration, only allows brick colors and returns 2016 studs
@@ -174,6 +177,22 @@ renderSteppedConnection = RunService.RenderStepped:connect(function()
 end)
 
 -- End of stolen code
+
+-- Begin Loading Screen Fix --
+if RetrofiyConfig.LoadingScreenFix then
+    task.spawn(function() -- Spawn into a thread to prevent asynchronous execution of the fix 
+        local numberToWait = math.random(5, 10)
+        task.wait(numberToWait)
+        if not game:IsLoaded() then
+            game.Loaded:Wait()
+        end
+        task.wait(0.25)
+        renderSteppedConnection:Disconnect()
+        task.wait(0.25)
+        LoadingScreen:Destroy()
+    end)
+end
+-- End Loading Screen Fix --  
 
 local VirtualMouseIconEnabled = UserInputService.MouseIconEnabled
 UserInputService.MouseIconEnabled = false
