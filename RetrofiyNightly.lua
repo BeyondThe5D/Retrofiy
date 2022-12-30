@@ -623,7 +623,7 @@ if RetrofiyConfig.RetroCoreGui then
 			end
 		end)
 
-		task.spawn(function()
+		coroutine.resume(coroutine.create(function()
 			local SpecialPlayer = SpecialPlayers[player.UserId]
 
 			if player.UserId == game.CreatorId then
@@ -639,7 +639,7 @@ if RetrofiyConfig.RetroCoreGui then
 					Icon.Image = GetAsset("Retrofiy/Assets/Textures/" .. Memberships[tostring(math.round((player.UserId / 3) * 100) * 0.01):split(".")[2] or "0"])
 				end
 			end
-		end)
+		end))
 	end
 
 	for _, teams in pairs(Teams:GetChildren()) do
@@ -860,7 +860,9 @@ if RetrofiyConfig.RetroWorkspace then
 	workspace.DescendantAdded:Connect(ConvertBasePart)
 
 	for _, baseparts in pairs(workspace:GetDescendants()) do
-		ConvertBasePart(baseparts)
+		coroutine.resume(coroutine.create(function()
+			ConvertBasePart(baseparts)
+		end))
 	end
 
 	sethiddenproperty(workspace:FindFirstChildOfClass("Terrain"), "Decoration", false)
@@ -936,7 +938,7 @@ if RetrofiyConfig.RetroCharacters then
 		PreviousCameraSubject = workspace.CurrentCamera.CameraSubject
 	end)
 
-	task.spawn(function()
+	coroutine.resume(coroutine.create(function()
 		while true do
 			while #Humanoids > 0 do
 				for _, humanoids in pairs(Humanoids) do -- Does not work if player has infinite health!
@@ -945,9 +947,10 @@ if RetrofiyConfig.RetroCharacters then
 					humanoids.MaxHealth -= 0.001
 				end
 			end
+
 			RunService.RenderStepped:Wait()
 		end
-	end)
+	end))
 end
 
 if RetrofiyConfig.RetroChat then
