@@ -365,7 +365,7 @@ if RetrofiyConfig.RetroCoreGui then
 	local CanTogglePlayerlist = true
 	local ChosenPlayerlistVisibility = CanTogglePlayerlist
 
-	CoreGui:WaitForChild("ThemeProvider").Enabled = false
+	CoreGui.TopBarApp.Enabled = false
 	CoreGui.PlayerList.Enabled = false
 
 	local Topbar = Instance.new("Frame")
@@ -482,7 +482,7 @@ if RetrofiyConfig.RetroCoreGui then
 	}
 
 	local SettingsButton = CreateIcon(UDim2.new(0, 32, 0, 25), "Hamburger.png", 0)
-	local ChatButton = CreateIcon(UDim2.new(0, 28, 0, 27), CoreChatBools[CoreGui.ThemeProvider.TopBarFrame.LeftFrame.ChatIcon.Background.Icon.Image], 0)
+	local ChatButton = CreateIcon(UDim2.new(0, 28, 0, 27), CoreChatBools[CoreGui.TopBarApp.TopBarFrame.LeftFrame.ChatIcon.Background.Icon.Image], 0)
 	local BackpackButton = CreateIcon(UDim2.new(0, 22, 0, 28), BackpackTextures[CoreGui.RobloxGui.Backpack.Inventory.Visible], 0)
 
 	ChatButton.MouseButton1Down:Connect(function()
